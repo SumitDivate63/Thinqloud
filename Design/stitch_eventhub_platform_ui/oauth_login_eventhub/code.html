@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign in - EventHub</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#dbe1ff",
+            "surface-variant": "#d3e4fe",
+            "on-tertiary-fixed": "#001a42",
+            "surface-container-high": "#dce9ff",
+            "on-tertiary": "#ffffff",
+            "surface-container-highest": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "on-secondary": "#ffffff",
+            "error": "#ba1a1a",
+            "inverse-surface": "#213145",
+            "primary-fixed": "#dae2fd",
+            "on-primary-fixed": "#131b2e",
+            "on-background": "#0b1c30",
+            "background": "#f8f9ff",
+            "on-error-container": "#93000a",
+            "surface-bright": "#f8f9ff",
+            "on-tertiary-fixed-variant": "#004395",
+            "tertiary-fixed-dim": "#adc6ff",
+            "on-surface-variant": "#45464d",
+            "error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#3f465c",
+            "primary-container": "#131b2e",
+            "inverse-primary": "#bec6e0",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-container": "#7c839b",
+            "secondary": "#0051d5",
+            "on-error": "#ffffff",
+            "surface-container": "#e5eeff",
+            "on-secondary-fixed-variant": "#003ea8",
+            "tertiary-container": "#001a42",
+            "outline-variant": "#c6c6cd",
+            "primary-fixed-dim": "#bec6e0",
+            "tertiary-fixed": "#d8e2ff",
+            "surface-tint": "#565e74",
+            "surface-dim": "#cbdbf5",
+            "surface-container-low": "#eff4ff",
+            "on-tertiary-container": "#3980f4",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary": "#000000",
+            "primary": "#000000",
+            "outline": "#76777d",
+            "secondary-fixed-dim": "#b4c5ff",
+            "on-secondary-fixed": "#00174b",
+            "on-primary": "#ffffff",
+            "secondary-container": "#316bf3",
+            "surface": "#f8f9ff",
+            "on-secondary-container": "#fefcff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "gutter": "1.5rem",
+            "margin-mobile": "1rem",
+            "margin": "2rem",
+            "space-xl": "2rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-mobile": "1rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "stat-value": ["Inter"],
+            "display-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-xl": ["Inter"],
+            "label-md": ["Inter"],
+            "body-md-medium": ["Inter"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "stat-value": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "headline-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "label-md": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "body-md-medium": ["14px", { "lineHeight": "20px", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- Top Minimal Utility Bar -->
+<header class="w-full px-6 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-headline-sm" data-icon="calendar_today">calendar_today</span>
+</div>
+<span class="text-headline-lg font-headline-lg font-bold text-on-surface tracking-tight">EventHub</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-secondary text-label-sm font-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+        SSO Active
+      </span>
+<a class="text-on-surface-variant hover:text-on-surface text-label-md font-label-md transition-colors flex items-center gap-1" href="#">
+<span>Campus Directory</span>
+<span class="material-symbols-outlined text-body-sm" data-icon="arrow_outward">arrow_outward</span>
+</a>
+</div>
+</header>
+<!-- Main Centered Authentication Canvas -->
+<main class="flex-1 flex items-center justify-center px-4 py-8">
+<div class="w-full max-w-[460px] bg-surface-container-lowest border border-outline-variant/60 rounded-xl shadow-[0_4px_24px_rgba(15,23,42,0.06)] p-7 md:p-9 relative overflow-hidden transition-all duration-150">
+<!-- Subtle Brand Accent Highlight -->
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+<!-- Header & Icon Badge -->
+<div class="flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center text-secondary border border-surface-container-high mb-4">
+<span class="material-symbols-outlined text-headline-xl" data-icon="lock_open">lock_open</span>
+</div>
+<!-- Role Switcher / Portal Badge -->
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-secondary text-label-sm font-label-sm mb-3">
+<span class="material-symbols-outlined text-label-md" data-icon="verified_user">verified_user</span>
+          Campus Single Sign-On (SSO) Portal
+        </div>
+<h1 class="text-headline-xl font-headline-xl text-on-surface tracking-tight">Welcome back to EventHub</h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-2 max-w-sm">
+          Sign in to access your event dashboard, digital pass, and live sessions
+        </p>
+</div>
+<!-- Action Buttons Cluster -->
+<div class="mt-8 space-y-3">
+<!-- Google OAuth Button -->
+<button class="w-full h-11 flex items-center justify-center gap-3 px-4 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-body-md-medium text-body-md-medium hover:bg-surface-container-low hover:border-outline focus:outline-none focus:ring-2 focus:ring-secondary/30 transition-all duration-150 shadow-sm group" type="button">
+<svg aria-hidden="true" class="w-4 h-4 flex-shrink-0" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path>
+</svg>
+<span>Continue with Google</span>
+</button>
+<!-- Microsoft / Campus Account OAuth Button -->
+<button class="w-full h-11 flex items-center justify-center gap-3 px-4 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-body-md-medium text-body-md-medium hover:bg-surface-container-low hover:border-outline focus:outline-none focus:ring-2 focus:ring-secondary/30 transition-all duration-150 shadow-sm group" type="button">
+<svg aria-hidden="true" class="w-4 h-4 flex-shrink-0" viewbox="0 0 23 23">
+<path d="M1 1h10v10H1z" fill="#f35325"></path>
+<path d="M12 1h10v10H12z" fill="#81bc06"></path>
+<path d="M1 12h10v10H1z" fill="#05a6f0"></path>
+<path d="M12 12h10v10H12z" fill="#ffba08"></path>
+</svg>
+<span>Continue with Microsoft / Campus Account</span>
+</button>
+</div>
+<!-- Authentication Protocol Divider -->
+<div class="relative my-6 flex items-center justify-center">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-outline-variant/60"></div>
+</div>
+<div class="relative bg-surface-container-lowest px-3">
+<span class="text-label-sm font-label-sm text-outline flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]" data-icon="policy">policy</span>
+            Secure OAuth 2.0 &amp; SAML Authentication
+          </span>
+</div>
+</div>
+<!-- Federated Directory Provisioning Notice -->
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-surface-container-high/80 flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary flex-shrink-0 mt-0.5 text-headline-sm" data-icon="info">info</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+<strong class="font-semibold text-on-surface">First time signing in?</strong> Your account and attendee tier will automatically synchronize with your campus or enterprise directory.
+        </p>
+</div>
+<!-- Enterprise Compliance Check Row -->
+<div class="mt-6 pt-4 border-t border-outline-variant/40 flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1.5 text-label-sm font-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[15px] text-secondary" data-icon="check_circle">check_circle</span>
+          Zero-trust verified
+        </span>
+<a class="text-label-sm font-label-sm text-secondary hover:underline flex items-center gap-1" href="#">
+<span>Manual Token Key</span>
+<span class="material-symbols-outlined text-[13px]" data-icon="key">key</span>
+</a>
+</div>
+</div>
+</main>
+<!-- Institutional Footer -->
+<footer class="w-full py-5 px-6 text-center">
+<div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-label-md font-label-md text-on-surface-variant">
+<span>Protected by Enterprise Identity Governance</span>
+<span class="text-outline-variant">•</span>
+<a class="hover:text-secondary transition-colors underline-offset-4 hover:underline" href="#">Help &amp; Campus Support</a>
+<span class="text-outline-variant">•</span>
+<a class="hover:text-secondary transition-colors underline-offset-4 hover:underline" href="#">Privacy Policy</a>
+</div>
+</footer>
+</body></html>

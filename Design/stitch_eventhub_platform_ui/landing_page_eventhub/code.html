@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EventHub — Campus &amp; Enterprise Event Operations Platform</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Inter Font Family -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Forms and Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#dbe1ff",
+            "surface-variant": "#d3e4fe",
+            "on-tertiary-fixed": "#001a42",
+            "surface-container-high": "#dce9ff",
+            "on-tertiary": "#ffffff",
+            "surface-container-highest": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "on-secondary": "#ffffff",
+            "error": "#ba1a1a",
+            "inverse-surface": "#213145",
+            "primary-fixed": "#dae2fd",
+            "on-primary-fixed": "#131b2e",
+            "on-background": "#0b1c30",
+            "background": "#f8f9ff",
+            "on-error-container": "#93000a",
+            "surface-bright": "#f8f9ff",
+            "on-tertiary-fixed-variant": "#004395",
+            "tertiary-fixed-dim": "#adc6ff",
+            "on-surface-variant": "#45464d",
+            "error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#3f465c",
+            "primary-container": "#131b2e",
+            "inverse-primary": "#bec6e0",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-container": "#7c839b",
+            "secondary": "#0051d5",
+            "on-error": "#ffffff",
+            "surface-container": "#e5eeff",
+            "on-secondary-fixed-variant": "#003ea8",
+            "tertiary-container": "#001a42",
+            "outline-variant": "#c6c6cd",
+            "primary-fixed-dim": "#bec6e0",
+            "tertiary-fixed": "#d8e2ff",
+            "surface-tint": "#565e74",
+            "surface-dim": "#cbdbf5",
+            "surface-container-low": "#eff4ff",
+            "on-tertiary-container": "#3980f4",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary": "#000000",
+            "primary": "#000000",
+            "outline": "#76777d",
+            "secondary-fixed-dim": "#b4c5ff",
+            "on-secondary-fixed": "#00174b",
+            "on-primary": "#ffffff",
+            "secondary-container": "#316bf3",
+            "surface": "#f8f9ff",
+            "on-secondary-container": "#fefcff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "gutter": "1.5rem",
+            "margin-mobile": "1rem",
+            "margin": "2rem",
+            "space-xl": "2rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-mobile": "1rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "stat-value": ["Inter"],
+            "display-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-xl": ["Inter"],
+            "label-md": ["Inter"],
+            "body-md-medium": ["Inter"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "stat-value": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "headline-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "label-md": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "body-md-medium": ["14px", { "lineHeight": "20px", "fontWeight": "500" }]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-surface text-on-surface antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed min-h-screen flex flex-col font-body-md">
+<!-- TOP PUBLIC NAVBAR -->
+<header class="sticky top-0 z-40 w-full bg-surface-container-lowest shadow-sm">
+<div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+<!-- Brand & Badging -->
+<div class="flex items-center gap-8">
+<a class="flex items-center gap-2 group" href="#">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-body-lg" data-icon="calendar_today">calendar_today</span>
+</div>
+<span class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">EventHub</span>
+</a>
+<!-- Desktop Navigation Items -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-label-md text-label-md text-secondary font-semibold border-b-2 border-secondary pb-0.5" href="#events">Explore Events</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors duration-150 ease-in-out font-medium" href="#features">Features</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors duration-150 ease-in-out font-medium" href="#how-it-works">How It Works</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors duration-150 ease-in-out font-medium" href="#about">About</a>
+</nav>
+</div>
+<!-- Action Cluster -->
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-label-md text-label-md hover:bg-surface-container-low transition-colors duration-150" type="button">
+          Sign In
+        </button>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-medium hover:bg-inverse-surface transition-colors duration-150 shadow-sm" type="button">
+          Get Started
+        </button>
+</div>
+</div>
+</header>
+<!-- MAIN CANVAS -->
+<main class="flex-1">
+<!-- HERO SECTION -->
+<section class="max-w-7xl mx-auto px-6 pt-16 pb-20 lg:pt-24 lg:pb-28">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<!-- Left Hero Copy & Intent -->
+<div class="lg:col-span-7 flex flex-col items-start">
+<!-- Institutional Trust Chip -->
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container border border-outline-variant mb-6">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold tracking-wide">ENTERPRISE &amp; CAMPUS SYMPOSIUM PLATFORM</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-on-surface tracking-tight mb-6 leading-tight">
+            Manage Events. Connect People. Track Everything.
+          </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-xl">
+            One simple platform to manage event registration, sessions, attendance, speakers and feedback. Engineered for institutional scale and real-time operational reliability.
+          </p>
+<!-- CTAs -->
+<div class="flex flex-wrap items-center gap-4 w-full sm:w-auto">
+<a class="h-10 px-6 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-inverse-surface transition-colors shadow-sm" href="#events">
+<span>Explore Events</span>
+<span class="material-symbols-outlined text-body-md" data-icon="arrow_forward">arrow_forward</span>
+</a>
+<button class="h-10 px-6 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-label-md text-label-md flex items-center justify-center hover:bg-surface-container-low transition-colors" type="button">
+              Sign In
+            </button>
+</div>
+<!-- Trust Badges Metrics Strip -->
+<div class="grid grid-cols-3 gap-6 pt-10 mt-10 border-t border-outline-variant w-full max-w-lg">
+<div>
+<div class="font-stat-value text-stat-value text-on-surface">140k+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Validated Attendees</div>
+</div>
+<div>
+<div class="font-stat-value text-stat-value text-on-surface">99.8%</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Scan Success Rate</div>
+</div>
+<div>
+<div class="font-stat-value text-stat-value text-on-surface">&lt;0.4s</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Badge Sync Latency</div>
+</div>
+</div>
+</div>
+<!-- Right Hero Mockup Banner (Pass & Scanner Widget Bento) -->
+<div class="lg:col-span-5 relative">
+<div class="relative bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 overflow-hidden">
+<!-- Terminal Header Simulation -->
+<div class="flex items-center justify-between pb-4 mb-4 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-outline-variant"></span>
+<span class="w-3 h-3 rounded-full bg-outline-variant"></span>
+<span class="w-3 h-3 rounded-full bg-outline-variant"></span>
+<span class="ml-2 font-label-sm text-label-sm text-on-surface-variant font-mono">live-kiosk-desk-04.sys</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container text-secondary font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                Scanning Active
+              </span>
+</div>
+<!-- Bento Preview Row: QR Code Pass & Immediate Check-in Overlay -->
+<div class="space-y-4">
+<!-- Digital Pass Card -->
+<div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant flex items-center justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm text-secondary font-semibold">ALL-ACCESS DELEGATE PASS</span>
+<div class="font-headline-sm text-headline-sm text-on-surface font-semibold">Dr. Elena Rostova</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant font-mono">REG-2026-9941 • MIT CSAIL</div>
+</div>
+<!-- Simulated QR Code Icon Graphic -->
+<div class="w-16 h-16 bg-surface-container-lowest rounded-lg border border-outline-variant p-1 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-display-lg" data-icon="qr_code_2">qr_code_2</span>
+</div>
+</div>
+<!-- Scanner Viewport Module -->
+<div class="bg-primary-container text-on-primary rounded-lg p-5 relative overflow-hidden">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-fixed text-headline-sm" data-icon="photo_camera">photo_camera</span>
+<span class="font-label-md text-label-md text-surface-variant">Gate 2 FastTrack Terminal</span>
+</div>
+<span class="font-label-sm text-label-sm text-surface-variant font-mono">FPS: 60.0</span>
+</div>
+<!-- Scanner Target Frame -->
+<div class="w-44 h-44 mx-auto relative border border-secondary-fixed/30 rounded-lg flex items-center justify-center">
+<!-- Reticle Corners -->
+<div class="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-secondary-fixed"></div>
+<div class="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-secondary-fixed"></div>
+<div class="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-secondary-fixed"></div>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-secondary-fixed"></div>
+<!-- Scanning Line -->
+<div class="w-full h-0.5 bg-secondary-fixed/80 shadow-sm animate-pulse"></div>
+<span class="material-symbols-outlined text-surface-variant/40 text-display-lg" data-icon="qr_code_scanner">qr_code_scanner</span>
+</div>
+<!-- Instant Response Toast -->
+<div class="mt-4 bg-surface-container-lowest text-on-surface p-3 rounded-lg flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-headline-sm" data-icon="check_circle">check_circle</span>
+<div>
+<div class="font-label-md text-label-md font-semibold">Attendance Verified</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Track A: Distributed Systems Room 402</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm font-semibold">Admitted</span>
+</div>
+</div>
+</div>
+<!-- Bottom Subtext / Status -->
+<div class="pt-3 mt-3 flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-label-md text-secondary" data-icon="shield">shield</span>
+                Encrypted Session ID Validation
+              </span>
+<span class="font-mono">v4.2.1-prod</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- UPCOMING EVENTS GRID -->
+<section class="bg-surface-container-low py-20 border-y border-outline-variant" id="events">
+<div class="max-w-7xl mx-auto px-6">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+<div>
+<div class="font-label-sm text-label-sm text-secondary font-semibold tracking-wider mb-2">CAMPUS &amp; TECH SYMPOSIA</div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface font-semibold tracking-tight">Featured Enterprise Events</h2>
+</div>
+<a class="font-label-md text-label-md text-secondary font-semibold hover:underline flex items-center gap-1" href="#">
+<span>View All Schedules</span>
+<span class="material-symbols-outlined text-headline-sm" data-icon="north_east">north_east</span>
+</a>
+</div>
+<!-- 3-Card Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Event Card 1: AI & Cloud Summit 2026 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col justify-between overflow-hidden shadow-sm hover:border-secondary transition-colors duration-150">
+<div>
+<div class="h-44 w-full bg-surface-container relative overflow-hidden flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A brightly lit, modern conference auditorium during an artificial intelligence symposium, featuring clean minimalist architectural lines, keynote screens displaying neural network diagrams in crisp navy and blue tones, and delegates seated at sleek workstations in a professional academic setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArnbGI5kLmoPppisVRyHBeHURLxBl6DBmt8WsD0by5vpRxs5feSSY0uKBLHTR38yPkNLKshS59Xm1E_QA7oD66y2W6_3Unm0GHxM424d6Cq0VBgvEeI-rltCBJjTzRzrKzoazUaQIOgIbD9XdN2AcBPyFEBq-y22RUXg7dKqprEfAb9OsiUwcO8CLxjk8QKSyfONFVv6FmAeBrORg41_nShiA9KYj1YbFHPB86DhTALJ9cIztVY2PK"/>
+<span class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm border border-outline-variant font-label-sm text-label-sm text-secondary font-semibold">
+                  Symposium
+                </span>
+</div>
+<div class="p-6">
+<div class="flex items-center gap-2 mb-3 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-headline-sm text-secondary" data-icon="calendar_month">calendar_month</span>
+<span>March 14-16, 2026</span>
+<span class="text-outline-variant">•</span>
+<span class="material-symbols-outlined text-headline-sm text-secondary" data-icon="location_on">location_on</span>
+<span>Grand Hall A</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface font-semibold mb-2">AI &amp; Cloud Summit 2026</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+                  Keynotes, distributed systems architecture reviews, and multi-cloud engineering workshops led by industry leaders.
+                </p>
+<div class="flex flex-wrap gap-1.5 mb-6">
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Cloud Native</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Generative ML</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Kubernetes</span>
+</div>
+</div>
+</div>
+<div class="px-6 pb-6 pt-3 border-t border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Seats Available</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">42 / 300</span>
+</div>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-inverse-surface transition-colors" type="button">
+                Register Now
+              </button>
+</div>
+</div>
+<!-- Event Card 2: Full Stack Web Bootcamp -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col justify-between overflow-hidden shadow-sm hover:border-secondary transition-colors duration-150">
+<div>
+<div class="h-44 w-full bg-surface-container relative overflow-hidden flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A clean, contemporary computer laboratory with rows of monitors displaying code editors and modern web frameworks, bathed in balanced daylight from floor-to-ceiling windows, highlighting a disciplined and high-efficiency technical training environment with neat cabling and minimalist ergonomic furniture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATCVYWB6EYsZW5t1tobatCN-cQnptZwZPKrEdIk9GlMvHO3tYEgyivkjhqzTx2Va0XVo-dl56SuqMa-qzd6QkuR6UGeDJvyhc_mGy-lcM0S3tVK8K1vjjX_qDYO3GpKjTdPV97eXqbJePTqzsekKlPakH5riJeqg8OJpzFN6WptEYcd9MIbyqa5qe6GMXmDvGdf1iHZKfhuZ4YCj_NFcQmafR54VFzO1joI7Uc2Zohusjm3CzlsGXo"/>
+<span class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm border border-outline-variant font-label-sm text-label-sm text-secondary font-semibold">
+                  Intensive Lab
+                </span>
+</div>
+<div class="p-6">
+<div class="flex items-center gap-2 mb-3 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-headline-sm text-secondary" data-icon="calendar_month">calendar_month</span>
+<span>April 02-04, 2026</span>
+<span class="text-outline-variant">•</span>
+<span class="material-symbols-outlined text-headline-sm text-secondary" data-icon="location_on">location_on</span>
+<span>Innovation Wing 3B</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface font-semibold mb-2">Full Stack Web Bootcamp</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+                  Hands-on hackathon-style engineering sprints focusing on typed backends, reactive architectures, and CI/CD pipelines.
+                </p>
+<div class="flex flex-wrap gap-1.5 mb-6">
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">TypeScript</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Next.js</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">PostgreSQL</span>
+</div>
+</div>
+</div>
+<div class="px-6 pb-6 pt-3 border-t border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Seats Available</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">18 / 80</span>
+</div>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-inverse-surface transition-colors" type="button">
+                Register Now
+              </button>
+</div>
+</div>
+<!-- Event Card 3: Campus Tech Conference 2026 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col justify-between overflow-hidden shadow-sm hover:border-secondary transition-colors duration-150">
+<div>
+<div class="h-44 w-full bg-surface-container relative overflow-hidden flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="An expansive university convention hall where collegiate tech sponsors and student innovators interact beside professional modular booths, rendered in a crisp, sharp lighting aesthetic with polished concrete floors and minimal signage in slate and navy hues." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBzqASAnWCw8g4rTrwXzFg3n3vWEZqVCmmVk-SiwzlumNmjQo61IOnqte23KsZjgCoPviN0hwI_c19M37M2t9Qw2KfwyOxE_gKru8XM2fi63ac2J5vb3wJYbglKjGBSabD7_ezvpuxGTUEv6X0E9DloqRZo6yq1tCrMwML5C8TvF78ldWmdMrfKZASDSugqlWxAt6HiQ1D6EatfMQKkDXYBh9f5HObbXnstMl9naI4DFvlbH_fUADU"/>
+<span class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm border border-outline-variant font-label-sm text-label-sm text-secondary font-semibold">
+                  Campus Convention
+                </span>
+</div>
+<div class="p-6">
+<div class="flex items-center gap-2 mb-3 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-headline-sm text-secondary" data-icon="calendar_month">calendar_month</span>
+<span>May 18-20, 2026</span>
+<span class="text-outline-variant">•</span>
+<span class="material-symbols-outlined text-headline-sm text-secondary" data-icon="location_on">location_on</span>
+<span>Campus Main Arena</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface font-semibold mb-2">Campus Tech Conference 2026</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+                  Collegiate venture pitches, engineering project showcases, and enterprise hiring panels connecting 3,000+ students.
+                </p>
+<div class="flex flex-wrap gap-1.5 mb-6">
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Recruitment</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Hardware &amp; IoT</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Keynotes</span>
+</div>
+</div>
+</div>
+<div class="px-6 pb-6 pt-3 border-t border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Seats Available</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">120 / 600</span>
+</div>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-inverse-surface transition-colors" type="button">
+                Register Now
+              </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- KEY PLATFORM FEATURES SECTION -->
+<section class="max-w-7xl mx-auto px-6 py-20" id="features">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<div class="font-label-sm text-label-sm text-secondary font-semibold tracking-wider mb-2">BUILT FOR PRECISION</div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface font-semibold tracking-tight mb-4">Core Infrastructure Features</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Purpose-built tooling designed specifically for administrators, event directors, and verification staff handling demanding participant flows.
+        </p>
+</div>
+<!-- 4 Minimal Clean Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Feature 1 -->
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant shadow-sm hover:border-secondary transition-colors">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary mb-5">
+<span class="material-symbols-outlined text-headline-xl" data-icon="group_add">group_add</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-2">Seamless Registrations</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            SSO-authenticated participant onboarding, automated cohort filtering, and waitlist allocations without spreadsheets.
+          </p>
+<div class="mt-4 pt-4 border-t border-outline-variant font-label-sm text-label-sm text-secondary font-semibold">
+            Institutional SAML 2.0 Ready →
+          </div>
+</div>
+<!-- Feature 2 -->
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant shadow-sm hover:border-secondary transition-colors">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary mb-5">
+<span class="material-symbols-outlined text-headline-xl" data-icon="how_to_reg">how_to_reg</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-2">Live Dynamic QR Attendance</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            Rotating session tokens prevent fraud and credential sharing. Instant scanning across mobile devices and check-in kiosks.
+          </p>
+<div class="mt-4 pt-4 border-t border-outline-variant font-label-sm text-label-sm text-secondary font-semibold">
+            Offline Kiosk Sync Support →
+          </div>
+</div>
+<!-- Feature 3 -->
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant shadow-sm hover:border-secondary transition-colors">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary mb-5">
+<span class="material-symbols-outlined text-headline-xl" data-icon="schedule">schedule</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-2">Speaker &amp; Session Rosters</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            Multi-track conflict resolution, speaker honorarium attachments, and real-time push schedule updates directly to attendee passes.
+          </p>
+<div class="mt-4 pt-4 border-t border-outline-variant font-label-sm text-label-sm text-secondary font-semibold">
+            Interactive Room Rosters →
+          </div>
+</div>
+<!-- Feature 4 -->
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant shadow-sm hover:border-secondary transition-colors">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary mb-5">
+<span class="material-symbols-outlined text-headline-xl" data-icon="rate_review">rate_review</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-2">Instant Feedback &amp; Analytics</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            Automatic post-session sentiment surveys trigger upon check-out scan. Export compliance-ready PDF attendance sheets.
+          </p>
+<div class="mt-4 pt-4 border-t border-outline-variant font-label-sm text-label-sm text-secondary font-semibold">
+            Automated Audit Exports →
+          </div>
+</div>
+</div>
+</section>
+<!-- HOW IT WORKS TIMELINE -->
+<section class="bg-surface-container-low py-20 border-t border-outline-variant" id="how-it-works">
+<div class="max-w-7xl mx-auto px-6">
+<div class="text-center max-w-xl mx-auto mb-16">
+<div class="font-label-sm text-label-sm text-secondary font-semibold tracking-wider mb-2">OPERATIONAL FLOW</div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface font-semibold tracking-tight">How EventHub Operates</h2>
+</div>
+<!-- 3-Step Clean Bento Timeline -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+<!-- Step 1 -->
+<div class="p-8 rounded-xl bg-surface-container-lowest border border-outline-variant relative shadow-sm">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary font-headline-sm text-headline-sm font-bold flex items-center justify-center mb-6">
+              1
+            </div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-3">Register with Campus SSO</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+              Attendees authenticate in seconds using university or enterprise single sign-on credentials. Session allocations and digital passes generate immediately.
+            </p>
+<div class="bg-surface-container rounded-lg p-3 font-mono text-body-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="verified_user">verified_user</span>
+<span>OAuth2 &amp; SAML 2.0 Auth</span>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="p-8 rounded-xl bg-surface-container-lowest border border-outline-variant relative shadow-sm">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary font-headline-sm text-headline-sm font-bold flex items-center justify-center mb-6">
+              2
+            </div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-3">Attend &amp; Scan QR Code</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+              Present dynamic credentials at lecture doors or sponsor booths. Station scanners log timestamps and room capacity thresholds instantaneously.
+            </p>
+<div class="bg-surface-container rounded-lg p-3 font-mono text-body-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span>Sub-second Verification</span>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="p-8 rounded-xl bg-surface-container-lowest border border-outline-variant relative shadow-sm">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary font-headline-sm text-headline-sm font-bold flex items-center justify-center mb-6">
+              3
+            </div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-3">Receive Certificate &amp; Insights</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+              Participants submit quick 1-tap feedback and immediately download cryptographically verifiable certificates. Admins monitor real-time retention.
+            </p>
+<div class="bg-surface-container rounded-lg p-3 font-mono text-body-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="workspace_premium">workspace_premium</span>
+<span>Instant Credential Issuance</span>
+</div>
+</div>
+</div>
+<!-- Banner for Institution Inquiries -->
+<div class="mt-16 rounded-xl bg-primary-container text-on-primary p-8 lg:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm" id="about">
+<div class="space-y-2 text-center md:text-left">
+<h3 class="font-headline-xl text-headline-xl font-bold">Ready to standardize your campus events?</h3>
+<p class="font-body-md text-body-md text-surface-variant max-w-xl">
+              From small departmental seminars to multi-day collegiate hackathons, EventHub delivers uninterrupted verification and attendance compliance.
+            </p>
+</div>
+<div class="flex items-center gap-3">
+<button class="h-10 px-6 rounded-lg bg-surface-container-lowest text-on-surface font-label-md text-label-md font-semibold hover:bg-surface-container transition-colors" type="button">
+              Schedule Admin Demo
+            </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- CLEAN MINIMAL FOOTER -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant py-14">
+<div class="max-w-7xl mx-auto px-6">
+<div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+<!-- Brand Summary Column -->
+<div class="col-span-2 space-y-4">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-body-md" data-icon="calendar_today">calendar_today</span>
+</div>
+<span class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">EventHub</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm">
+            High-density event management, identity verification, and real-time attendance tracking engineered for higher education and enterprise symposiums.
+          </p>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>All systems operational • SOC2 Type II Certified</span>
+</div>
+</div>
+<!-- Links Column: Platform -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold mb-4">Platform</h4>
+<ul class="space-y-2.5 font-body-sm text-body-sm text-on-surface-variant">
+<li><a class="hover:text-on-surface transition-colors" href="#">Explore Events</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">QR Attendance Kiosk</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">Speaker Directory</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">Certificate Engine</a></li>
+</ul>
+</div>
+<!-- Links Column: Solutions -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold mb-4">Solutions</h4>
+<ul class="space-y-2.5 font-body-sm text-body-sm text-on-surface-variant">
+<li><a class="hover:text-on-surface transition-colors" href="#">Universities &amp; Colleges</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">Enterprise Symposia</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">Tech Bootcamps</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">Recruitment Fairs</a></li>
+</ul>
+</div>
+<!-- Links Column: Governance & Legal -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold mb-4">Governance</h4>
+<ul class="space-y-2.5 font-body-sm text-body-sm text-on-surface-variant">
+<li><a class="hover:text-on-surface transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">FERPA &amp; GDPR</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">Terms of Service</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">Security Architecture</a></li>
+</ul>
+</div>
+</div>
+<!-- Bottom Rule & Copyright -->
+<div class="pt-8 border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between gap-4 font-body-sm text-body-sm text-on-surface-variant">
+<div>
+          © 2026 EventHub Operations Platform Inc. All rights reserved.
+        </div>
+<div class="flex items-center gap-6">
+<a class="hover:text-on-surface transition-colors" href="#">System Status</a>
+<a class="hover:text-on-surface transition-colors" href="#">Documentation</a>
+<a class="hover:text-on-surface transition-colors" href="#">Admin Portal</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

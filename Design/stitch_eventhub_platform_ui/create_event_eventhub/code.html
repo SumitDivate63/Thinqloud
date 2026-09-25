@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Event - EventHub Admin</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#dbe1ff",
+            "surface-variant": "#d3e4fe",
+            "on-tertiary-fixed": "#001a42",
+            "surface-container-high": "#dce9ff",
+            "on-tertiary": "#ffffff",
+            "surface-container-highest": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "on-secondary": "#ffffff",
+            "error": "#ba1a1a",
+            "inverse-surface": "#213145",
+            "primary-fixed": "#dae2fd",
+            "on-primary-fixed": "#131b2e",
+            "on-background": "#0b1c30",
+            "background": "#f8f9ff",
+            "on-error-container": "#93000a",
+            "surface-bright": "#f8f9ff",
+            "on-tertiary-fixed-variant": "#004395",
+            "tertiary-fixed-dim": "#adc6ff",
+            "on-surface-variant": "#45464d",
+            "error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#3f465c",
+            "primary-container": "#131b2e",
+            "inverse-primary": "#bec6e0",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-container": "#7c839b",
+            "secondary": "#0051d5",
+            "on-error": "#ffffff",
+            "surface-container": "#e5eeff",
+            "on-secondary-fixed-variant": "#003ea8",
+            "tertiary-container": "#001a42",
+            "outline-variant": "#c6c6cd",
+            "primary-fixed-dim": "#bec6e0",
+            "tertiary-fixed": "#d8e2ff",
+            "surface-tint": "#565e74",
+            "surface-dim": "#cbdbf5",
+            "surface-container-low": "#eff4ff",
+            "on-tertiary-container": "#3980f4",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary": "#000000",
+            "primary": "#000000",
+            "outline": "#76777d",
+            "secondary-fixed-dim": "#b4c5ff",
+            "on-secondary-fixed": "#00174b",
+            "on-primary": "#ffffff",
+            "secondary-container": "#316bf3",
+            "surface": "#f8f9ff",
+            "on-secondary-container": "#fefcff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "gutter": "1.5rem",
+            "margin-mobile": "1rem",
+            "margin": "2rem",
+            "space-xl": "2rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-mobile": "1rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "stat-value": ["Inter"],
+            "display-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-xl": ["Inter"],
+            "label-md": ["Inter"],
+            "body-md-medium": ["Inter"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "stat-value": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "headline-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "label-md": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "body-md-medium": ["14px", { "lineHeight": "20px", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="docked left-0 top-0 h-screen w-64 z-30 border-r border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface shadow-none flex flex-col justify-between h-full p-4 w-64 fixed left-0 top-0 transition-all duration-150 ease-in-out">
+<div>
+<!-- Header Brand & Institution Emblem -->
+<div class="flex items-center gap-3 px-2 py-3 mb-3 border-b border-outline-variant/30">
+<div alt="Institution emblem" class="w-10 h-10 rounded-lg bg-primary-container text-surface-container-lowest flex items-center justify-center font-bold font-headline-sm text-headline-sm">
+          EH
+        </div>
+<div class="flex flex-col">
+<span class="text-headline-lg font-headline-lg font-bold text-on-surface dark:text-inverse-on-surface tracking-tight leading-tight">EventHub Admin</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Enterprise Console</span>
+</div>
+</div>
+<!-- Quick Action / CTA from JSON -->
+<div class="mb-4 px-1">
+<a class="w-full flex items-center justify-center gap-2 bg-primary-container text-surface-container-lowest px-4 py-2.5 rounded-lg font-label-md text-label-md hover:bg-on-surface transition-colors shadow-sm" href="#create-event-top">
+<span class="material-symbols-outlined text-lg">add_circle</span>
+<span>Create Event</span>
+</a>
+</div>
+<!-- Primary Navigation Tabs (JSON: Dashboard, Events, Sessions, Speakers, Attendance, Registrations, Feedback, Analytics, Settings) -->
+<nav class="space-y-1">
+<!-- Dashboard -->
+<a class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-primary-container rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Events (ACTIVE) -->
+<a class="bg-surface-container dark:bg-primary-container text-secondary dark:text-secondary-fixed font-semibold rounded-lg px-3 py-2 flex items-center gap-3 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="font-label-md text-label-md flex-1">Events</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</a>
+<!-- Sessions -->
+<a class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-primary-container rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">schedule</span>
+<span class="font-label-md text-label-md">Sessions</span>
+</a>
+<!-- Speakers -->
+<a class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-primary-container rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">record_voice_over</span>
+<span class="font-label-md text-label-md">Speakers</span>
+</a>
+<!-- Attendance -->
+<a class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-primary-container rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">how_to_reg</span>
+<span class="font-label-md text-label-md">Attendance</span>
+</a>
+<!-- Registrations -->
+<a class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-primary-container rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">group_add</span>
+<span class="font-label-md text-label-md">Registrations</span>
+</a>
+<!-- Feedback -->
+<a class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-primary-container rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">rate_review</span>
+<span class="font-label-md text-label-md">Feedback</span>
+</a>
+<!-- Analytics -->
+<a class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-primary-container rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<!-- Settings -->
+<a class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-primary-container rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Footer Tabs from JSON (Documentation, Help & Support) -->
+<div class="pt-4 border-t border-outline-variant/40 space-y-1">
+<a class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-primary-container rounded-lg px-3 py-2 flex items-center gap-3 font-medium text-body-sm font-body-sm transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">menu_book</span>
+<span class="font-label-md text-label-md">Documentation</span>
+</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-primary-container rounded-lg px-3 py-2 flex items-center gap-3 font-medium text-body-sm font-body-sm transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">contact_support</span>
+<span class="font-label-md text-label-md">Help &amp; Support</span>
+</a>
+<div class="px-3 pt-2 text-[11px] text-outline font-medium">
+        v3.8.4 Enterprise Campus
+      </div>
+</div>
+</aside>
+<!-- Main Viewport Canvas (Offset by 256px / 64 for fixed sidebar) -->
+<div class="ml-64 flex flex-col min-h-screen">
+<!-- Top Admin Bar / TopNavBar Component -->
+<header class="docked full-width top-0 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm dark:shadow-none flex justify-between items-center w-full px-6 py-3 max-w-full sticky">
+<!-- Search Bar on Left as defined in JSON -->
+<div class="flex items-center gap-4 flex-1 max-w-lg">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-xl">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low/60 border border-outline-variant/60 rounded-lg text-body-md font-body-md text-on-surface placeholder:text-outline focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all" placeholder="Search events, venues, cohorts, or students..." type="text"/>
+</div>
+</div>
+<!-- Trailing Icon Actions & User Avatar -->
+<div class="flex items-center gap-3">
+<!-- Swap Horiz action -->
+<button class="w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors" title="Switch Campus Workspace" type="button">
+<span class="material-symbols-outlined text-xl">swap_horiz</span>
+</button>
+<!-- Notifications action -->
+<button class="w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low relative transition-colors" title="Notifications" type="button">
+<span class="material-symbols-outlined text-xl">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-secondary ring-2 ring-surface-container-lowest"></span>
+</button>
+<div class="h-6 w-px bg-outline-variant/60 mx-1"></div>
+<!-- User Profile Avatar with active status indicator -->
+<div class="flex items-center gap-3 pl-1">
+<div class="relative">
+<img alt="User profile avatar with active status indicator" class="w-9 h-9 rounded-full object-cover border border-outline-variant" data-alt="Close-up portrait of an enterprise event administrator in modern collegiate professional attire, softly lit in an executive architectural campus office setting with neutral slate backgrounds." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApuDv09zTOR3ELK64cP_oCs-EObc1T2Ji2q8iqm4cCrXL42MAZ0vND_66lnYVxiIga0OK-lSbJkrDLedQhxymG35L81M-gp8Lun9QDm0OWHozoLYi7Xyvq2kw1kmHwh_i6yaNOk8tfrNffCY6odQ6inFL4FGLZkb22sTvjyqsQ5-TnYxikqZepY6agYlIhztDcSVJKob1bdmV5xQHc0hZHzLpFvrjUdBg8BARZoeiAuiM2X4b3G4jg"/>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-surface-container-lowest"></span>
+</div>
+<div class="hidden xl:flex flex-col text-left">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Dr. Marcus Vance</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Director of Symposia</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content Canvas -->
+<main class="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto pb-28">
+<!-- Breadcrumbs & Meta Row -->
+<nav class="flex items-center gap-2 mb-3 text-body-sm font-body-sm text-on-surface-variant">
+<a class="hover:text-secondary flex items-center gap-1 transition-colors" href="#">
+<span class="material-symbols-outlined text-base">calendar_month</span>
+<span>Events</span>
+</a>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-medium">Create New Event</span>
+</nav>
+<!-- Page Header with Status Badge and Actions -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-outline-variant/50 mb-6" id="create-event-top">
+<div class="flex items-center gap-3 flex-wrap">
+<h1 class="text-headline-xl font-headline-xl text-on-surface font-bold tracking-tight">Create New Event</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-amber-50 text-amber-700 border border-amber-200">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+            Draft
+          </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ID: EVT-2026-TMP09</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="h-10 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors flex items-center gap-2 shadow-sm" type="button">
+<span class="material-symbols-outlined text-lg">save</span>
+            Save Draft
+          </button>
+<button class="h-10 px-5 rounded-lg bg-primary-container text-surface-container-lowest font-label-md text-label-md font-semibold hover:bg-on-surface transition-colors flex items-center gap-2 shadow-sm" type="button">
+<span class="material-symbols-outlined text-lg">rocket_launch</span>
+            Publish Event
+          </button>
+</div>
+</section>
+<!-- Step / Section Progression Tabs -->
+<nav class="bg-surface-container-lowest rounded-xl border border-outline-variant/60 p-1.5 mb-8 shadow-sm flex flex-wrap md:flex-nowrap gap-1">
+<a class="flex-1 min-w-[200px] flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container text-secondary font-semibold border-b-2 border-secondary transition-all" href="#section-basic">
+<span class="w-6 h-6 rounded-full bg-secondary text-surface-container-lowest font-label-sm text-label-sm flex items-center justify-center font-bold">1</span>
+<div class="flex flex-col text-left">
+<span class="font-label-md text-label-md">Basic Information</span>
+<span class="font-body-sm text-body-sm text-secondary/80 font-normal">Title, Category &amp; Banner</span>
+</div>
+</a>
+<a class="flex-1 min-w-[200px] flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all" href="#section-venue">
+<span class="w-6 h-6 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm flex items-center justify-center font-bold">2</span>
+<div class="flex flex-col text-left">
+<span class="font-label-md text-label-md">Schedule &amp; Venue</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-normal">Dates, Hall &amp; Location</span>
+</div>
+</a>
+<a class="flex-1 min-w-[200px] flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all" href="#section-registration">
+<span class="w-6 h-6 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm flex items-center justify-center font-bold">3</span>
+<div class="flex flex-col text-left">
+<span class="font-label-md text-label-md">Registration &amp; Tickets</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-normal">Cap, Deadlines &amp; Access</span>
+</div>
+</a>
+<a class="flex-1 min-w-[200px] flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all" href="#section-operations">
+<span class="w-6 h-6 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm flex items-center justify-center font-bold">4</span>
+<div class="flex flex-col text-left">
+<span class="font-label-md text-label-md">Operational Settings</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-normal">QR Code, Surveys &amp; Certs</span>
+</div>
+</a>
+</nav>
+<!-- Main Form Container -->
+<form class="space-y-8" onsubmit="event.preventDefault();">
+<!-- SECTION 1: BASIC INFORMATION -->
+<section class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-6 shadow-sm" id="section-basic">
+<div class="flex items-start justify-between pb-5 border-b border-outline-variant/40 mb-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">info</span>
+</div>
+<div>
+<h2 class="text-headline-lg font-headline-lg font-bold text-on-surface">1. Basic Information</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Core descriptors displayed to campus attendees and recruiters.</p>
+</div>
+</div>
+<span class="text-label-sm font-label-sm px-2.5 py-1 rounded bg-surface-container-low text-on-surface-variant">Required</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Event Title Input -->
+<div class="md:col-span-2">
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5" for="event-title">
+                Event Title <span class="text-error">*</span>
+</label>
+<input class="w-full h-11 px-3.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all" id="event-title" placeholder="e.g. AI &amp; Cloud Summit 2026" type="text" value="AI &amp; Cloud Summit 2026"/>
+<p class="mt-1 font-body-sm text-body-sm text-on-surface-variant">Enter a concise, descriptive title for institutional event registries.</p>
+</div>
+<!-- Event Category / Type Select Dropdown -->
+<div class="md:col-span-2">
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5" for="event-category">
+                Event Category / Type <span class="text-error">*</span>
+</label>
+<div class="relative">
+<select class="w-full h-11 px-3.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface appearance-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all pr-10" id="event-category">
+<option selected="">Collegiate Symposium / Tech Conference</option>
+<option>Campus Recruitment &amp; Hackathon</option>
+<option>Faculty Research Seminar</option>
+<option>Student Chapter Workshop</option>
+<option>Executive Leadership Roundtable</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+</div>
+<!-- Short Description Textarea -->
+<div class="md:col-span-2">
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5" for="event-description">
+                Short Description <span class="text-error">*</span>
+</label>
+<textarea class="w-full p-3.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all" id="event-description" placeholder="Provide a compelling overview of the symposium keynote, agenda highlights, and eligible collegiate cohorts..." rows="4">The premier annual academic symposium bringing together pioneering researchers, undergraduate engineering cohorts, and enterprise hyperscale architects for three days of high-throughput cloud workshops, AI safety panels, and vetted industry recruitment sessions.</textarea>
+<div class="flex justify-between items-center mt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Markdown syntax supported for links and bullets.</span>
+<span class="font-label-sm text-label-sm text-outline">284 / 600 characters</span>
+</div>
+</div>
+<!-- Event Banner Uploader Dropzone -->
+<div class="md:col-span-2">
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5">
+                Event Banner Graphic <span class="text-on-surface-variant font-normal">(16:9 recommended, min 1280x720)</span>
+</label>
+<div class="border-2 border-dashed border-outline-variant hover:border-secondary bg-surface-container-low/40 rounded-xl p-6 text-center cursor-pointer transition-colors group">
+<div class="flex flex-col items-center justify-center">
+<div class="w-12 h-12 rounded-full bg-surface-container text-secondary flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-2xl">cloud_upload</span>
+</div>
+<div class="font-label-md text-label-md text-on-surface font-semibold mb-1">
+                    Click to upload banner or drag &amp; drop SVG, PNG, or JPG
+                  </div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+                    Maximum file size 8MB. Banner will appear in attendee portals and digital QR badges.
+                  </div>
+<button class="h-9 px-4 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors shadow-sm" type="button">
+                    Select File
+                  </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: SCHEDULE & VENUE -->
+<section class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-6 shadow-sm" id="section-venue">
+<div class="flex items-start justify-between pb-5 border-b border-outline-variant/40 mb-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">location_on</span>
+</div>
+<div>
+<h2 class="text-headline-lg font-headline-lg font-bold text-on-surface">2. Schedule &amp; Venue</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Timeframe, auditorium allocations, and campus logistics.</p>
+</div>
+</div>
+<span class="text-label-sm font-label-sm px-2.5 py-1 rounded bg-surface-container-low text-on-surface-variant">Required</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<!-- Start Date Picker -->
+<div>
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5" for="start-date">
+                Start Date <span class="text-error">*</span>
+</label>
+<div class="relative">
+<input class="w-full h-11 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all" id="start-date" type="date" value="2026-10-14"/>
+</div>
+</div>
+<!-- End Date Picker -->
+<div>
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5" for="end-date">
+                End Date <span class="text-error">*</span>
+</label>
+<div class="relative">
+<input class="w-full h-11 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all" id="end-date" type="date" value="2026-10-16"/>
+</div>
+</div>
+<!-- Start Time -->
+<div>
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5" for="start-time">
+                Daily Start Time <span class="text-error">*</span>
+</label>
+<div class="relative">
+<input class="w-full h-11 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all" id="start-time" type="time" value="09:00"/>
+</div>
+</div>
+<!-- End Time -->
+<div>
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5" for="end-time">
+                Daily End Time <span class="text-error">*</span>
+</label>
+<div class="relative">
+<input class="w-full h-11 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all" id="end-time" type="time" value="17:30"/>
+</div>
+</div>
+</div>
+<!-- Format Toggle: In-Person vs Virtual -->
+<div class="p-4 bg-surface-container-low/50 rounded-xl border border-outline-variant/40 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<span class="font-label-md text-label-md font-semibold text-on-surface block">Event Delivery Format</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Switching to Hybrid or Virtual will auto-generate verified live stream portals.</span>
+</div>
+<div class="inline-flex p-1 bg-surface-container-lowest border border-outline-variant rounded-lg">
+<button class="px-4 py-2 rounded-md font-label-md text-label-md font-semibold bg-primary-container text-surface-container-lowest shadow-sm flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-base">domain</span>
+                In-Person
+              </button>
+<button class="px-4 py-2 rounded-md font-label-md text-label-md font-medium text-on-surface-variant hover:text-on-surface flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-base">videocam</span>
+                Virtual Stream
+              </button>
+<button class="px-4 py-2 rounded-md font-label-md text-label-md font-medium text-on-surface-variant hover:text-on-surface flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-base">hub</span>
+                Hybrid Mode
+              </button>
+</div>
+</div>
+<!-- Physical Venue Details -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5" for="venue-name">
+                Campus Building / Complex Name <span class="text-error">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">apartment</span>
+<input class="w-full h-11 pl-10 pr-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all" id="venue-name" placeholder="e.g. Turing Computational Research Center" type="text" value="Turing Computational Research Center"/>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5" for="room-name">
+                Specific Room / Main Auditorium <span class="text-error">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">meeting_room</span>
+<input class="w-full h-11 pl-10 pr-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all" id="room-name" placeholder="e.g. Grand Keynote Auditorium Alpha" type="text" value="Grand Keynote Auditorium Alpha (Hall 101)"/>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: REGISTRATION & TICKETS -->
+<section class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-6 shadow-sm" id="section-registration">
+<div class="flex items-start justify-between pb-5 border-b border-outline-variant/40 mb-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">confirmation_number</span>
+</div>
+<div>
+<h2 class="text-headline-lg font-headline-lg font-bold text-on-surface">3. Registration &amp; Quota</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Capacity limits, ticketing policies, and candidate intake parameters.</p>
+</div>
+</div>
+<span class="text-label-sm font-label-sm px-2.5 py-1 rounded bg-surface-container-low text-on-surface-variant">Mandatory</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<!-- Maximum Attendee Cap -->
+<div>
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5" for="attendee-cap">
+                Maximum Attendee Cap <span class="text-error">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">groups</span>
+<input class="w-full h-11 pl-10 pr-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all" id="attendee-cap" type="number" value="500"/>
+</div>
+<p class="mt-1 font-body-sm text-body-sm text-on-surface-variant">Seats will lock automatically once reached unless waitlist is permitted.</p>
+</div>
+<!-- Registration Deadline -->
+<div>
+<label class="block font-label-md text-label-md font-semibold text-on-surface mb-1.5" for="reg-deadline">
+                Registration Deadline (Date &amp; Time) <span class="text-error">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">event_busy</span>
+<input class="w-full h-11 pl-10 pr-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none transition-all" id="reg-deadline" type="datetime-local" value="2026-10-10T23:59"/>
+</div>
+<p class="mt-1 font-body-sm text-body-sm text-on-surface-variant">Intake portal closes automatically at timestamp.</p>
+</div>
+</div>
+<!-- Toggles & Eligibility Checkboxes -->
+<div class="space-y-4 pt-4 border-t border-outline-variant/30">
+<!-- Allow Waitlist Toggle -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low/40 rounded-lg border border-outline-variant/40">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-2xl">playlist_add_check</span>
+<div>
+<span class="font-label-md text-label-md font-semibold text-on-surface block">Allow Overflow Waitlist</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Automatically backfill confirmed cancellations with queued collegiate candidates.</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<!-- Open to External Participants Checkbox -->
+<div class="flex items-start gap-3 p-4 bg-surface-container-low/40 rounded-lg border border-outline-variant/40">
+<input checked="" class="mt-1 h-5 w-5 rounded border-outline-variant text-secondary focus:ring-secondary/30" id="external-participants" type="checkbox"/>
+<label class="cursor-pointer" for="external-participants">
+<span class="font-label-md text-label-md font-semibold text-on-surface block">Open to external collegiate and enterprise participants</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">If unchecked, registration is strictly restricted to students and staff with verified campus SSO email domains.</span>
+</label>
+</div>
+</div>
+</section>
+<!-- SECTION 4: OPERATIONAL SETTINGS -->
+<section class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-6 shadow-sm" id="section-operations">
+<div class="flex items-start justify-between pb-5 border-b border-outline-variant/40 mb-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">tune</span>
+</div>
+<div>
+<h2 class="text-headline-lg font-headline-lg font-bold text-on-surface">4. Operational Settings</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Automated on-site check-in scanners, feedback workflows, and credential issuance.</p>
+</div>
+</div>
+<span class="text-label-sm font-label-sm px-2.5 py-1 rounded bg-secondary-fixed text-on-secondary-fixed font-semibold">Live Automation</span>
+</div>
+<div class="space-y-4">
+<!-- Dynamic QR Attendance Toggle (Checked) -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low/40 rounded-lg border border-outline-variant/40 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">qr_code_scanner</span>
+</div>
+<div>
+<span class="font-label-md text-label-md font-semibold text-on-surface block">Enable Dynamic QR Attendance Check-In</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Generates 15-second rotating security QR codes on attendee devices to prevent proxy scan check-ins.</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<!-- Post-Session Feedback Survey Toggle (Checked) -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low/40 rounded-lg border border-outline-variant/40 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">rate_review</span>
+</div>
+<div>
+<span class="font-label-md text-label-md font-semibold text-on-surface block">Enable Post-Session Feedback Survey</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Dispatches standardized 5-question institutional evaluation form 10 minutes prior to session adjournment.</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<!-- Auto-issue Verified Digital Certificate Toggle (Checked) -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low/40 rounded-lg border border-outline-variant/40 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">verified</span>
+</div>
+<div>
+<span class="font-label-md text-label-md font-semibold text-on-surface block">Auto-issue Verified Digital Certificate of Attendance</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Issues cryptographically stamped PDF certificates once candidate achieves &gt;= 80% recorded presence.</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</section>
+</form>
+</main>
+<!-- Bottom Sticky Action Bar -->
+<div class="fixed bottom-0 right-0 left-64 bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/50 p-4 px-8 z-30 shadow-lg flex items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-emerald-600 text-lg">check_circle</span>
+<span class="font-body-sm text-body-sm">All autosaved to cloud draft • 14:32:08</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="h-10 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors" type="button">
+          Save as Draft
+        </button>
+<button class="h-10 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-base">visibility</span>
+          Preview Event Page
+        </button>
+<button class="h-10 px-6 rounded-lg bg-primary-container text-surface-container-lowest font-label-md text-label-md font-semibold hover:bg-on-surface transition-colors flex items-center gap-2 shadow-sm" type="button">
+<span class="material-symbols-outlined text-base">rocket_launch</span>
+          Publish Event
+        </button>
+</div>
+</div>
+</div>
+</body></html>

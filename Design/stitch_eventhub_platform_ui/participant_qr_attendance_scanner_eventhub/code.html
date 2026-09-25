@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Session Attendance Scanner - EventHub</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#dbe1ff",
+            "surface-variant": "#d3e4fe",
+            "on-tertiary-fixed": "#001a42",
+            "surface-container-high": "#dce9ff",
+            "on-tertiary": "#ffffff",
+            "surface-container-highest": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "on-secondary": "#ffffff",
+            "error": "#ba1a1a",
+            "inverse-surface": "#213145",
+            "primary-fixed": "#dae2fd",
+            "on-primary-fixed": "#131b2e",
+            "on-background": "#0b1c30",
+            "background": "#f8f9ff",
+            "on-error-container": "#93000a",
+            "surface-bright": "#f8f9ff",
+            "on-tertiary-fixed-variant": "#004395",
+            "tertiary-fixed-dim": "#adc6ff",
+            "on-surface-variant": "#45464d",
+            "error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#3f465c",
+            "primary-container": "#131b2e",
+            "inverse-primary": "#bec6e0",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-container": "#7c839b",
+            "secondary": "#0051d5",
+            "on-secondary": "#ffffff",
+            "on-error": "#ffffff",
+            "surface-container": "#e5eeff",
+            "on-secondary-fixed-variant": "#003ea8",
+            "tertiary-container": "#001a42",
+            "outline-variant": "#c6c6cd",
+            "primary-fixed-dim": "#bec6e0",
+            "tertiary-fixed": "#d8e2ff",
+            "surface-tint": "#565e74",
+            "surface-dim": "#cbdbf5",
+            "surface-container-low": "#eff4ff",
+            "on-tertiary-container": "#3980f4",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary": "#000000",
+            "primary": "#000000",
+            "outline": "#76777d",
+            "secondary-fixed-dim": "#b4c5ff",
+            "on-secondary-fixed": "#00174b",
+            "on-primary": "#ffffff",
+            "secondary-container": "#316bf3",
+            "surface": "#f8f9ff",
+            "on-secondary-container": "#fefcff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "gutter": "1.5rem",
+            "margin-mobile": "1rem",
+            "margin": "2rem",
+            "space-xl": "2rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-mobile": "1rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "stat-value": ["Inter"],
+            "display-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-xl": ["Inter"],
+            "label-md": ["Inter"],
+            "body-md-medium": ["Inter"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600"}],
+            "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+            "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "stat-value": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "headline-sm": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600"}],
+            "headline-xl": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600"}],
+            "label-md": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+            "body-md-medium": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    @keyframes laserScan {
+      0% { top: 0%; opacity: 0.8; }
+      50% { top: 96%; opacity: 1; }
+      100% { top: 0%; opacity: 0.8; }
+    }
+    .scanner-laser {
+      animation: laserScan 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex justify-center selection:bg-secondary selection:text-on-secondary">
+<!-- Mobile Wrapper (~390px viewport canvas) -->
+<div class="w-full max-w-[420px] bg-background min-h-screen flex flex-col justify-between pb-6 border-x border-outline-variant/30 shadow-sm relative">
+<!-- Top App Bar (Task-focused context: suppression of full shell, contextual navigation back button) -->
+<header class="sticky top-0 z-40 bg-surface-container-lowest/95 backdrop-blur px-space-md py-3 shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<button aria-label="Go Back" class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface hover:bg-surface-container-low transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_back">arrow_back</span>
+</button>
+<div>
+<h1 class="text-headline-sm font-headline-sm text-on-surface">Session Attendance</h1>
+</div>
+</div>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-secondary text-label-sm font-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span>Live Check-in Open</span>
+</div>
+</header>
+<!-- Main Content Flow -->
+<main class="px-space-md pt-space-sm flex-1 space-y-space-md">
+<!-- Session Info Banner Card -->
+<section class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-space-md shadow-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="space-y-1">
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-low px-2 py-0.5 rounded">SESSION KEY-014</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface pt-0.5">Keynote: Scaling Generative Systems</h2>
+</div>
+<span class="material-symbols-outlined text-outline text-[22px] shrink-0" data-icon="qr_code_scanner">qr_code_scanner</span>
+</div>
+<div class="mt-3 pt-3 border-t border-outline-variant/30 grid grid-cols-2 gap-2 text-body-sm font-body-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="apartment">apartment</span>
+<span class="truncate">Hall A • Science Quad</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="schedule">schedule</span>
+<span>10:00 AM - 11:30 AM</span>
+</div>
+<div class="col-span-2 flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="record_voice_over">record_voice_over</span>
+<span class="font-body-md-medium text-body-sm">Speaker: Dr. Sarah Lin</span>
+</div>
+</div>
+</section>
+<!-- Viewfinder Scanner Container -->
+<section class="relative w-full rounded-xl overflow-hidden bg-primary-container border border-outline-variant/40 aspect-square flex flex-col items-center justify-center p-4 shadow-sm">
+<!-- Viewport Graphic Elements -->
+<div class="absolute inset-0 bg-gradient-to-b from-primary-container via-inverse-surface to-primary-container opacity-95"></div>
+<!-- High-tech 260x260 Scanner Box with Corner Brackets -->
+<div class="relative w-64 h-64 z-10 flex items-center justify-center">
+<!-- Top Left Corner -->
+<div class="absolute top-0 left-0 w-7 h-7 border-t-[3px] border-l-[3px] border-secondary-container rounded-tl-sm"></div>
+<!-- Top Right Corner -->
+<div class="absolute top-0 right-0 w-7 h-7 border-t-[3px] border-r-[3px] border-secondary-container rounded-tr-sm"></div>
+<!-- Bottom Left Corner -->
+<div class="absolute bottom-0 left-0 w-7 h-7 border-b-[3px] border-l-[3px] border-secondary-container rounded-bl-sm"></div>
+<!-- Bottom Right Corner -->
+<div class="absolute bottom-0 right-0 w-7 h-7 border-b-[3px] border-r-[3px] border-secondary-container rounded-br-sm"></div>
+<!-- Pulsing Scan Laser Beam -->
+<div class="scanner-laser absolute left-3 right-3 h-[2px] bg-secondary-container shadow-[0_0_12px_2px_rgba(49,107,243,0.9)] z-20"></div>
+<!-- Ambient Reticle Grid Lines -->
+<div class="w-full h-full border border-secondary-container/20 rounded-sm grid grid-cols-3 grid-rows-3 pointer-events-none">
+<div class="border-r border-b border-secondary-container/10"></div>
+<div class="border-r border-b border-secondary-container/10"></div>
+<div class="border-b border-secondary-container/10"></div>
+<div class="border-r border-b border-secondary-container/10"></div>
+<div class="border-r border-b border-secondary-container/10 flex items-center justify-center">
+<span class="w-2.5 h-2.5 rounded-full border border-secondary-container/60"></span>
+</div>
+<div class="border-b border-secondary-container/10"></div>
+<div class="border-r border-secondary-container/10"></div>
+<div class="border-r border-secondary-container/10"></div>
+<div></div>
+</div>
+</div>
+<!-- Viewfinder Instructional Prompt -->
+<div class="relative z-10 mt-4 px-4 py-1.5 bg-primary-container/80 backdrop-blur border border-outline-variant/30 rounded-full text-center">
+<p class="text-body-sm font-body-sm text-surface-container-high tracking-tight">Align the room projector QR code within this frame</p>
+</div>
+<!-- Floating Camera Action Controls -->
+<div class="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-3 px-4">
+<button class="flex items-center gap-1.5 bg-inverse-surface/80 hover:bg-inverse-surface text-inverse-on-surface px-3 py-1.5 rounded-lg border border-outline/40 backdrop-blur transition-all duration-150 text-label-md font-label-md" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="flashlight_on">flashlight_on</span>
+<span>Torch On</span>
+</button>
+<button class="flex items-center gap-1.5 bg-inverse-surface/80 hover:bg-inverse-surface text-inverse-on-surface px-3 py-1.5 rounded-lg border border-outline/40 backdrop-blur transition-all duration-150 text-label-md font-label-md" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="flip_camera_ios">flip_camera_ios</span>
+<span>Switch Camera</span>
+</button>
+</div>
+</section>
+<!-- Verified Success State Card -->
+<section class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-space-md shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 bg-surface-container-low text-secondary border border-secondary/20 px-2.5 py-1 rounded-full text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+<span>Attendance Recorded</span>
+</div>
+<span class="text-label-sm font-label-sm text-outline font-mono">10:04:12 AM</span>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low p-2.5 rounded-lg">
+<div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0 font-headline-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="person">person</span>
+</div>
+<div class="min-w-0 flex-1">
+<p class="text-body-md-medium font-body-md-medium text-on-surface truncate">Maya Patel</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant font-mono">ST-2024-0419 • CS Honors</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="verified">verified</span>
+</div>
+<div class="flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant pt-1">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-outline" data-icon="key">key</span>
+            Cryptographic dynamic token verified
+          </span>
+<span class="text-outline font-mono">HASH: 9a7b...c31</span>
+</div>
+</section>
+<!-- Fallback / Secondary Actions -->
+<div class="pt-1">
+<button class="w-full h-10 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface rounded-lg text-body-md-medium font-body-md-medium flex items-center justify-center gap-2 transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[18px] text-outline" data-icon="pin">pin</span>
+<span>Manual Roll Number Entry</span>
+</button>
+</div>
+</main>
+<!-- Bottom Action Footer (Clean Mobile-Safe Anchor) -->
+<footer class="mt-4 px-space-md pt-2">
+<button class="w-full h-11 bg-primary hover:bg-primary-container text-on-primary rounded-lg text-body-md-medium font-body-md-medium flex items-center justify-center gap-2 shadow-sm transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_back">arrow_back</span>
+<span>Back to My Sessions</span>
+</button>
+<p class="text-center text-label-sm font-label-sm text-outline mt-2">EventHub Campus Security &amp; Attendance Engine v4.2</p>
+</footer>
+</div>
+</body></html>

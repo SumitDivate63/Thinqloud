@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EventHub Admin - AI &amp; Cloud Summit 2026</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#003ea8",
+            "primary": "#000000",
+            "on-tertiary-container": "#3980f4",
+            "inverse-primary": "#bec6e0",
+            "surface-bright": "#f8f9ff",
+            "secondary": "#0051d5",
+            "primary-fixed": "#dae2fd",
+            "error-container": "#ffdad6",
+            "on-primary": "#ffffff",
+            "on-tertiary-fixed-variant": "#004395",
+            "inverse-surface": "#213145",
+            "inverse-on-surface": "#eaf1ff",
+            "on-primary-container": "#7c839b",
+            "secondary-fixed-dim": "#b4c5ff",
+            "surface-variant": "#d3e4fe",
+            "tertiary-fixed": "#d8e2ff",
+            "on-error": "#ffffff",
+            "on-background": "#0b1c30",
+            "tertiary": "#000000",
+            "surface-container-highest": "#d3e4fe",
+            "secondary-container": "#316bf3",
+            "error": "#ba1a1a",
+            "on-surface": "#0b1c30",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "tertiary-container": "#001a42",
+            "primary-container": "#131b2e",
+            "on-surface-variant": "#45464d",
+            "primary-fixed-dim": "#bec6e0",
+            "secondary-fixed": "#dbe1ff",
+            "surface-container": "#e5eeff",
+            "on-secondary-fixed": "#00174b",
+            "on-secondary": "#ffffff",
+            "surface-container-high": "#dce9ff",
+            "surface-dim": "#cbdbf5",
+            "surface-container-low": "#eff4ff",
+            "background": "#f8f9ff",
+            "on-primary-fixed-variant": "#3f465c",
+            "on-error-container": "#93000a",
+            "tertiary-fixed-dim": "#adc6ff",
+            "outline-variant": "#c6c6cd",
+            "on-tertiary-fixed": "#001a42",
+            "on-secondary-container": "#fefcff",
+            "on-primary-fixed": "#131b2e",
+            "surface-tint": "#565e74",
+            "outline": "#76777d",
+            "surface": "#f8f9ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "gutter-mobile": "1rem",
+            "margin": "2rem",
+            "gutter": "1.5rem",
+            "space-md": "1rem",
+            "margin-mobile": "1rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "label-md": ["Inter"],
+            "body-md": ["Inter"],
+            "stat-value": ["Inter"],
+            "headline-xl": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-sm": ["Inter"],
+            "headline-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "display-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "body-md-medium": ["Inter"]
+          },
+          "fontSize": {
+            "label-md": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "stat-value": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "body-md-medium": ["14px", { "lineHeight": "20px", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined[data-weight="fill"] {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col font-body-md antialiased selection:bg-surface-variant selection:text-secondary">
+<!-- Side Navigation Bar (Anchored from JSON) -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant z-30 flex flex-col justify-between p-4 shadow-none">
+<div class="flex flex-col gap-6">
+<!-- Header / Institution Profile -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-surface-container-lowest flex items-center justify-center font-bold text-headline-sm">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="hub">hub</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">EventHub Admin</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Enterprise Console</span>
+</div>
+</div>
+<!-- Quick CTA -->
+<button class="w-full bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-150 ease-in-out shadow-sm">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>Create Event</span>
+</button>
+<!-- Main Navigation Tabs -->
+<nav class="flex flex-col gap-1">
+<a class="text-on-surface-variant hover:bg-surface-container-low rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="bg-surface-container text-secondary font-semibold rounded-lg px-3 py-2 flex items-center gap-3 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-secondary" data-icon="calendar_today" data-weight="fill">calendar_today</span>
+<span class="font-label-md text-label-md">Events</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="schedule">schedule</span>
+<span class="font-label-md text-label-md">Sessions</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="record_voice_over">record_voice_over</span>
+<span class="font-label-md text-label-md">Speakers</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="how_to_reg">how_to_reg</span>
+<span class="font-label-md text-label-md">Attendance</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="group_add">group_add</span>
+<span class="font-label-md text-label-md">Registrations</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="rate_review">rate_review</span>
+<span class="font-label-md text-label-md">Feedback</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Footer Utility Links -->
+<div class="flex flex-col gap-1 pt-4 border-t border-outline-variant">
+<a class="text-on-surface-variant hover:bg-surface-container-low rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="menu_book">menu_book</span>
+<span class="font-label-md text-label-md">Documentation</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low rounded-lg px-3 py-2 flex items-center gap-3 font-medium transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="contact_support">contact_support</span>
+<span class="font-label-md text-label-md">Help &amp; Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Administrative Content Canvas -->
+<div class="ml-64 flex-1 flex flex-col min-w-0 bg-background">
+<!-- Top Navigation Bar (Shared Component Anchor) -->
+<header class="bg-surface-container-lowest border-b border-outline-variant shadow-sm sticky top-0 z-20 flex justify-between items-center w-full px-8 py-3">
+<!-- Search on Left -->
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 placeholder:text-outline transition-all" placeholder="Search registrations, sessions, attendees..." type="text"/>
+</div>
+<!-- Navigation Links Cluster -->
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-on-surface-variant hover:text-on-surface font-medium font-label-md text-label-md transition-colors" href="#">Explore Events</a>
+<a class="text-secondary border-b-2 border-secondary pb-1 font-semibold font-label-md text-label-md" href="#">My Events</a>
+<a class="text-on-surface-variant hover:text-on-surface font-medium font-label-md text-label-md transition-colors" href="#">My Sessions</a>
+<a class="text-on-surface-variant hover:text-on-surface font-medium font-label-md text-label-md transition-colors" href="#">Attendance</a>
+</nav>
+<!-- Trailing Action Icons and User Profile -->
+<div class="flex items-center gap-3">
+<button class="w-9 h-9 rounded-lg hover:bg-surface-container-low text-on-surface flex items-center justify-center transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<button class="w-9 h-9 rounded-lg hover:bg-surface-container-low text-on-surface flex items-center justify-center transition-colors" title="Switch Console Workspace">
+<span class="material-symbols-outlined" data-icon="swap_horiz">swap_horiz</span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-1"></div>
+<div class="flex items-center gap-3 pl-1">
+<div class="relative">
+<img class="w-9 h-9 rounded-full object-cover border border-outline-variant" data-alt="Close up photographic corporate portrait of a young professional academic operations coordinator with glasses and warm ambient office lighting against a clean neutral architectural backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzELFGEByZhCajg5UhDWWj2kkODAV-fLkEC9rXcBlNhPSlIInu_wyOrx7_RfE96idWY2jfTLvPLWaIJFfPwuny1jZ5ohps-tUAfVQKiUzm8SN1Agvi06XLxw0gZpzy7B2dlSD9IKo8CYbRbRW3OzRTZkyp_g37r0w1TLUoZYB77nvBNWV8-h-VvkuKS2TWcvTzbsjTq1vSrDMUTM1nGrtD62hsFgLcY-qUQiJ5mQjG-ayCrOODnkTo"/>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-secondary border-2 border-surface-container-lowest rounded-full"></span>
+</div>
+<div class="hidden xl:flex flex-col text-left">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Sarah Chen</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Lead Administrator</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Body Workspace -->
+<main class="p-8 max-w-7xl w-full mx-auto flex flex-col gap-6">
+<!-- Breadcrumbs & Global Event Header -->
+<div class="flex flex-col gap-4">
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-2 text-body-sm font-body-sm text-on-surface-variant">
+<a class="hover:text-secondary transition-colors" href="#">Events</a>
+<span class="material-symbols-outlined text-outline text-base" data-icon="chevron_right">chevron_right</span>
+<span class="text-on-surface font-medium">AI &amp; Cloud Summit 2026</span>
+</nav>
+<!-- Title, Badges & Hero Actions -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-3 flex-wrap">
+<h1 class="font-display-lg text-display-lg text-on-surface tracking-tight font-bold">
+                AI &amp; Cloud Summit 2026
+              </h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container text-secondary text-label-sm font-label-sm border border-secondary/20 font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                Published
+              </span>
+</div>
+<div class="flex items-center gap-4 text-body-md font-body-md text-on-surface-variant">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="event">event</span>
+                Oct 28, 2026
+              </span>
+<span>•</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="location_on">location_on</span>
+                Main Auditorium &amp; North Campus Halls
+              </span>
+</div>
+</div>
+<!-- Primary Actions -->
+<div class="flex items-center gap-2.5">
+<button class="bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface font-label-md text-label-md px-3.5 py-2.5 rounded-lg flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-lg" data-icon="share">share</span>
+<span>Share</span>
+</button>
+<button class="bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface font-label-md text-label-md px-3.5 py-2.5 rounded-lg flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-lg" data-icon="edit">edit</span>
+<span>Edit Event</span>
+</button>
+<button class="bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md px-4 py-2.5 rounded-lg flex items-center gap-2 shadow-sm transition-all">
+<span class="material-symbols-outlined text-primary-fixed text-lg" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span>Launch QR Attendance</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Stats KPI Bar (4 Key Metrics) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Stat Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-[0_1px_3px_0_rgba(15,23,42,0.05)] flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-md text-label-md">Registrations</span>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container px-2 py-0.5 rounded-full font-semibold">96% Cap</span>
+</div>
+<div class="my-2">
+<div class="flex items-baseline gap-2">
+<span class="font-stat-value text-stat-value text-on-surface">480</span>
+<span class="text-on-surface-variant font-body-md text-body-md">/ 500</span>
+</div>
+<!-- Micro Progress Bar -->
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-2 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 96%"></div>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="trending_up">trending_up</span>
+            20 spots remaining for waitlist
+          </span>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-[0_1px_3px_0_rgba(15,23,42,0.05)] flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-md text-label-md">Scheduled Sessions</span>
+<span class="material-symbols-outlined text-outline" data-icon="calendar_month">calendar_month</span>
+</div>
+<div class="my-2">
+<span class="font-stat-value text-stat-value text-on-surface">8</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Across 3 auditorium tracks</span>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-[0_1px_3px_0_rgba(15,23,42,0.05)] flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-md text-label-md">Confirmed Speakers</span>
+<span class="material-symbols-outlined text-outline" data-icon="groups">groups</span>
+</div>
+<div class="my-2">
+<span class="font-stat-value text-stat-value text-on-surface">12</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Industry experts &amp; researchers</span>
+</div>
+<!-- Stat Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-[0_1px_3px_0_rgba(15,23,42,0.05)] flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-md text-label-md">Pricing Tier</span>
+<span class="text-label-sm font-label-sm text-on-surface bg-surface-container-low px-2 py-0.5 rounded-full font-semibold">Tier 1</span>
+</div>
+<div class="my-2">
+<span class="font-stat-value text-stat-value text-on-surface">$0</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Free Academic &amp; Campus Access</span>
+</div>
+</div>
+<!-- Navigation Tab Bar (Explicitly Required Hierarchy) -->
+<div class="border-b border-outline-variant flex items-center gap-8 -mb-2 overflow-x-auto">
+<button class="pb-3 text-secondary border-b-2 border-secondary font-semibold font-label-md text-label-md flex items-center gap-2 whitespace-nowrap">
+<span>Overview</span>
+</button>
+<button class="pb-3 text-on-surface-variant hover:text-on-surface font-medium font-label-md text-label-md flex items-center gap-2 whitespace-nowrap transition-colors">
+<span>Registrations</span>
+<span class="bg-surface-container px-2 py-0.5 rounded-full text-label-sm text-secondary font-semibold">480</span>
+</button>
+<button class="pb-3 text-on-surface-variant hover:text-on-surface font-medium font-label-md text-label-md flex items-center gap-2 whitespace-nowrap transition-colors">
+<span>Sessions</span>
+<span class="bg-surface-container px-2 py-0.5 rounded-full text-label-sm text-secondary font-semibold">8</span>
+</button>
+<button class="pb-3 text-on-surface-variant hover:text-on-surface font-medium font-label-md text-label-md flex items-center gap-2 whitespace-nowrap transition-colors">
+<span>Speakers</span>
+<span class="bg-surface-container px-2 py-0.5 rounded-full text-label-sm text-secondary font-semibold">12</span>
+</button>
+<button class="pb-3 text-on-surface-variant hover:text-on-surface font-medium font-label-md text-label-md flex items-center gap-2 whitespace-nowrap transition-colors">
+<span>Attendance</span>
+</button>
+<button class="pb-3 text-on-surface-variant hover:text-on-surface font-medium font-label-md text-label-md flex items-center gap-2 whitespace-nowrap transition-colors">
+<span>Feedback</span>
+</button>
+<button class="pb-3 text-on-surface-variant hover:text-on-surface font-medium font-label-md text-label-md flex items-center gap-2 whitespace-nowrap transition-colors">
+<span>Analytics</span>
+</button>
+</div>
+<!-- Content Grid: Overview & Operations (Bento Grid Composition) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- Left Column (8 cols): Event Summary & Schedule Table -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Section 1: Event Summary Card -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0_1px_3px_0_rgba(15,23,42,0.05)]">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="info">info</span>
+                Event Summary &amp; Logistics
+              </h2>
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Internal Reference: #EVT-2026-AI</span>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant mb-6 leading-relaxed">
+              The flagship collegiate AI &amp; Cloud Symposium convening over 480 computer science students, university faculty, and industry engineers. Key focus tracks center around LLM deployment architectures, scalable Kubernetes clusters, distributed consensus protocols, and contemporary career pathways in enterprise tech.
+            </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-surface-container">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined" data-icon="apartment">apartment</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Physical Venue</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Engineering Hall A &amp; Science Wing</span>
+<span class="font-body-sm text-body-sm text-outline">Campus North Gate 3</span>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined" data-icon="history_toggle_off">history_toggle_off</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Check-in Operational Window</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">09:00 AM - 05:00 PM EST</span>
+<span class="font-body-sm text-body-sm text-outline">Badge verification required at kiosks</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Session Schedule Table / Cards -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-[0_1px_3px_0_rgba(15,23,42,0.05)]">
+<div class="p-6 border-b border-outline-variant flex items-center justify-between">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Session Schedule</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Real-time attendance controls and room allocations</p>
+</div>
+<button class="text-secondary hover:text-on-secondary-fixed-variant text-label-md font-label-md font-semibold flex items-center gap-1 transition-colors">
+<span>View Full Schedule</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<!-- SaaS Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/60 border-b border-outline-variant text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
+<th class="py-3 px-6">Time &amp; Session</th>
+<th class="py-3 px-4">Speaker</th>
+<th class="py-3 px-4">Location</th>
+<th class="py-3 px-4">Status</th>
+<th class="py-3 px-6 text-right">Operational Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Row 1: Keynote (Active Attendance) -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4 px-6">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-secondary font-semibold">09:30 AM - 10:45 AM</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Keynote: Generative AI at Scale</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="font-body-md text-body-md text-on-surface font-medium">Dr. Sarah Lin</span>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container text-body-sm font-body-sm text-on-surface font-medium">
+<span class="material-symbols-outlined text-xs text-outline" data-icon="pin_drop">pin_drop</span>
+                        Hall A
+                      </span>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-highest text-secondary text-label-sm font-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                        Live Now
+                      </span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5 shadow-sm transition-all">
+<span class="material-symbols-outlined text-sm text-primary-fixed" data-icon="play_arrow">play_arrow</span>
+<span>Start Attendance</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Distributed Systems -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4 px-6">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">11:00 AM - 12:15 PM</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Distributed Systems &amp; Cloud Infrastructure</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="font-body-md text-body-md text-on-surface">Marcus Vance</span>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container text-body-sm font-body-sm text-on-surface font-medium">
+<span class="material-symbols-outlined text-xs text-outline" data-icon="pin_drop">pin_drop</span>
+                        Room 302
+                      </span>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-low text-on-surface-variant text-label-sm font-label-sm font-medium">
+                        Scheduled
+                      </span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="border border-outline-variant hover:bg-surface-container-low text-on-surface font-label-md text-label-md px-3 py-1.5 rounded-lg inline-flex items-center gap-1 transition-all">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="qr_code">qr_code</span>
+<span>Prepare Scanner</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Hands-on Kubernetes -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4 px-6">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">01:30 PM - 02:45 PM</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Hands-on Kubernetes &amp; Microservices</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="font-body-md text-body-md text-on-surface">Elena Rostova</span>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container text-body-sm font-body-sm text-on-surface font-medium">
+<span class="material-symbols-outlined text-xs text-outline" data-icon="pin_drop">pin_drop</span>
+                        Lab 4
+                      </span>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-low text-on-surface-variant text-label-sm font-label-sm font-medium">
+                        Scheduled
+                      </span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="border border-outline-variant hover:bg-surface-container-low text-on-surface font-label-md text-label-md px-3 py-1.5 rounded-lg inline-flex items-center gap-1 transition-all">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="qr_code">qr_code</span>
+<span>Prepare Scanner</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Panel Future Tech -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4 px-6">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">03:00 PM - 04:30 PM</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Panel: Future of Tech Careers</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="font-body-md text-body-md text-on-surface">4 Panel Speakers</span>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container text-body-sm font-body-sm text-on-surface font-medium">
+<span class="material-symbols-outlined text-xs text-outline" data-icon="pin_drop">pin_drop</span>
+                        Hall A
+                      </span>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-low text-on-surface-variant text-label-sm font-label-sm font-medium">
+                        Scheduled
+                      </span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="border border-outline-variant hover:bg-surface-container-low text-on-surface font-label-md text-label-md px-3 py-1.5 rounded-lg inline-flex items-center gap-1 transition-all">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="qr_code">qr_code</span>
+<span>Prepare Scanner</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Section 3: Speakers Grid -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0_1px_3px_0_rgba(15,23,42,0.05)]">
+<div class="flex items-center justify-between mb-5">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Featured Keynote Speakers</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">12 total verified speakers participating</p>
+</div>
+<button class="text-secondary hover:text-on-secondary-fixed-variant text-label-md font-label-md font-semibold flex items-center gap-1 transition-colors">
+<span>Manage Speakers</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Clean Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+<!-- Speaker 1 -->
+<div class="border border-outline-variant rounded-lg p-4 bg-surface-container-lowest hover:border-secondary/50 transition-all flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<img class="w-12 h-12 rounded-full object-cover border border-outline-variant" data-alt="Editorial candid portrait of Dr Sarah Lin, an Asian female machine learning research lead with sleek dark hair and a navy blazer, captured in high-key soft studio light against an architectural campus background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiuZ3SJpItLB-28Ft9dlakCi3VuxfMbuv9lDhLmKf9cvC8d9RlmHrjecPJUcPgCsz335kvYcbKn3AOMRiO_T5Lwx4hV5Fu4DtChvMYqXBLBmDiWHoZKp8b5oNoN1BbwVtQg6jXuIOcz8HT90RiUcaoS7m_HuDzx8TSGwLewURwI8Yv_sqKy3Mh-kuZnY9Aj6i17zR2rNagNq5j5aOcKNcVAQvD-kD-Qdqa7h_wA9WOSJ5rAFZLkg0Z"/>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-bold truncate">Dr. Sarah Lin</span>
+<span class="font-body-sm text-body-sm text-secondary font-medium truncate">Principal AI Scientist</span>
+</div>
+</div>
+<div class="pt-2 border-t border-surface-container flex items-center justify-between text-body-sm text-on-surface-variant">
+<span class="truncate">NextGen Labs</span>
+<span class="text-label-sm font-label-sm text-outline">Keynote</span>
+</div>
+</div>
+<!-- Speaker 2 -->
+<div class="border border-outline-variant rounded-lg p-4 bg-surface-container-lowest hover:border-secondary/50 transition-all flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<img class="w-12 h-12 rounded-full object-cover border border-outline-variant" data-alt="Modern studio headshot of Marcus Vance, a distinguished African American cloud architect smiling confidently, wearing minimalist eyeglasses in crisp cinematic rim lighting against a light gray interior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAQw6tj2Jc-5F7tu5ybYOuYkhAZ3GuiFIb9yUSy2m2tiQ-NSaa7lHgHarQew3Ju9Z9yV895xKIfW6LGelG73hwzeEX_tRyNha6dK_25P9W9VWEbbEc25_DXB72W1PhWla9r3XnHwLJKwTscNobZ4wZedVN8xHTz4QK-gG3ys6u89RVO9h-e9WLXbWExl5jXBinNRCx11lSCjyQk6bL43itKAEvr6YvWqXjJRaGnLvdOFc0HybHtvjd"/>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-bold truncate">Marcus Vance</span>
+<span class="font-body-sm text-body-sm text-secondary font-medium truncate">VP Infrastructure</span>
+</div>
+</div>
+<div class="pt-2 border-t border-surface-container flex items-center justify-between text-body-sm text-on-surface-variant">
+<span class="truncate">CloudScale Matrix</span>
+<span class="text-label-sm font-label-sm text-outline">Tech Track</span>
+</div>
+</div>
+<!-- Speaker 3 -->
+<div class="border border-outline-variant rounded-lg p-4 bg-surface-container-lowest hover:border-secondary/50 transition-all flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<img class="w-12 h-12 rounded-full object-cover border border-outline-variant" data-alt="Professional daylight photograph of Elena Rostova, a female software engineering director with shoulder-length blonde hair, wearing a slate gray sweater against an open modern tech campus lobby." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrvKflHrgGpFv7aYW_hFKO3yIAdCRSJE5SwAr6xGtcLllP9gFTPvTSxt2-FGktPnKgfqVNEENtIyKWYxYZvzKcoTlHlFM2Cr1CxtUDhzQ2wwNvRnWGnLXEJahZeL41bBqhhNXzSvCkU22L8U6ErVA-YYCQeWC6CZN5J6UYY93QcUwDReOar4pe-M_PMj5wzyzkpzog__u08HGJSOETqK9JkVaQOwRndor95SAsV-w_x0K0o3rqJm19"/>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-bold truncate">Elena Rostova</span>
+<span class="font-body-sm text-body-sm text-secondary font-medium truncate">Head of SRE</span>
+</div>
+</div>
+<div class="pt-2 border-t border-surface-container flex items-center justify-between text-body-sm text-on-surface-variant">
+<span class="truncate">OpenCloud Core</span>
+<span class="text-label-sm font-label-sm text-outline">Hands-on Lab</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column (4 cols): Quick Operational Controls & Scanner Launcher -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Section 4: Quick Operational Controls -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0_1px_3px_0_rgba(15,23,42,0.05)] flex flex-col gap-5">
+<div class="flex items-center justify-between border-b border-surface-container pb-4">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Operational Controls</h2>
+<span class="material-symbols-outlined text-outline" data-icon="tune">tune</span>
+</div>
+<!-- Control 1: Registration Cap -->
+<div class="flex items-start justify-between gap-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Registration Cap Toggle</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Limit capacity strictly to 500 attendees</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div class="h-px bg-surface-container"></div>
+<!-- Control 2: Feedback Form Status -->
+<div class="flex items-start justify-between gap-4">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Feedback Form Status</span>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container px-2 py-0.2 rounded-full font-semibold">Enabled</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Auto-send surveys post-session</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div class="h-px bg-surface-container"></div>
+<!-- Control 3: Certificate Issuance -->
+<div class="flex items-start justify-between gap-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Certificate Issuance</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Auto-generate verified PDF credentials for attendees with 80%+ presence</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div class="h-px bg-surface-container"></div>
+<!-- Control 4: Live Check-in Audit Mode -->
+<div class="flex items-start justify-between gap-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Dual-Device Verification</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Enforce staff PIN during check-in</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+<!-- QR Attendance Live Console Preview Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0_1px_3px_0_rgba(15,23,42,0.05)] flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary animate-ping"></span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">Kiosk Station #1</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded">Hall A Gate</span>
+</div>
+<!-- Stylized QR Attendance Scanner Target Frame -->
+<div class="relative bg-surface-container-high/40 rounded-xl p-6 flex flex-col items-center justify-center border border-dashed border-outline-variant overflow-hidden">
+<div class="w-36 h-36 border-2 border-secondary rounded-lg relative flex items-center justify-center bg-surface-container-lowest shadow-sm">
+<!-- Corner brackets aesthetic -->
+<div class="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-primary"></div>
+<div class="absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 border-primary"></div>
+<div class="absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 border-primary"></div>
+<div class="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-primary"></div>
+<span class="material-symbols-outlined text-5xl text-on-surface" data-icon="qr_code_2">qr_code_2</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface mt-3 font-semibold">Ready for Badge Scan</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-center">Position student dynamic QR code inside the frame</span>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 shadow-sm transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="fullscreen">fullscreen</span>
+<span>Kiosk Mode</span>
+</button>
+<button class="border border-outline-variant hover:bg-surface-container-low text-on-surface font-label-md text-label-md py-2.5 px-3 rounded-lg flex items-center justify-center transition-all" title="Scan Log">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="receipt_long">receipt_long</span>
+</button>
+</div>
+</div>
+<!-- Event Coordinator Contact Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-[0_1px_3px_0_rgba(15,23,42,0.05)] flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-bold">On-Duty Stage Manager</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Marcus Thorne • +1 (555) 019-2831</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Operational System Footer -->
+<footer class="mt-auto border-t border-outline-variant bg-surface-container-lowest py-4 px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-body-sm font-body-sm text-on-surface-variant">
+<div class="flex items-center gap-3">
+<span class="font-semibold text-on-surface">EventHub Enterprise</span>
+<span>•</span>
+<span>Collegiate Symposia Edition 2026</span>
+<span>•</span>
+<span class="inline-flex items-center gap-1 text-secondary font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+          Cluster Synchronized (4 nodes)
+        </span>
+</div>
+<div class="flex items-center gap-6">
+<a class="hover:text-secondary transition-colors" href="#">Audit Trail</a>
+<a class="hover:text-secondary transition-colors" href="#">Export Rosters</a>
+<a class="hover:text-secondary transition-colors" href="#">Privacy Governance</a>
+</div>
+</footer>
+</div>
+</body></html>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Participant Portal &amp; Dashboard - EventHub</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#003ea8",
+            "primary": "#000000",
+            "on-tertiary-container": "#3980f4",
+            "inverse-primary": "#bec6e0",
+            "surface-bright": "#f8f9ff",
+            "secondary": "#0051d5",
+            "primary-fixed": "#dae2fd",
+            "error-container": "#ffdad6",
+            "on-primary": "#ffffff",
+            "on-tertiary-fixed-variant": "#004395",
+            "inverse-surface": "#213145",
+            "inverse-on-surface": "#eaf1ff",
+            "on-primary-container": "#7c839b",
+            "secondary-fixed-dim": "#b4c5ff",
+            "surface-variant": "#d3e4fe",
+            "tertiary-fixed": "#d8e2ff",
+            "on-error": "#ffffff",
+            "on-background": "#0b1c30",
+            "tertiary": "#000000",
+            "surface-container-highest": "#d3e4fe",
+            "secondary-container": "#316bf3",
+            "error": "#ba1a1a",
+            "on-surface": "#0b1c30",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "tertiary-container": "#001a42",
+            "primary-container": "#131b2e",
+            "on-surface-variant": "#45464d",
+            "primary-fixed-dim": "#bec6e0",
+            "secondary-fixed": "#dbe1ff",
+            "surface-container": "#e5eeff",
+            "on-secondary-fixed": "#00174b",
+            "on-secondary": "#ffffff",
+            "surface-container-high": "#dce9ff",
+            "surface-dim": "#cbdbf5",
+            "surface-container-low": "#eff4ff",
+            "background": "#f8f9ff",
+            "on-primary-fixed-variant": "#3f465c",
+            "on-error-container": "#93000a",
+            "tertiary-fixed-dim": "#adc6ff",
+            "outline-variant": "#c6c6cd",
+            "on-tertiary-fixed": "#001a42",
+            "on-secondary-container": "#fefcff",
+            "on-primary-fixed": "#131b2e",
+            "surface-tint": "#565e74",
+            "outline": "#76777d",
+            "surface": "#f8f9ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "gutter-mobile": "1rem",
+            "margin": "2rem",
+            "gutter": "1.5rem",
+            "space-md": "1rem",
+            "margin-mobile": "1rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "label-md": ["Inter"],
+            "body-md": ["Inter"],
+            "stat-value": ["Inter"],
+            "headline-xl": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-sm": ["Inter"],
+            "headline-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "display-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "body-md-medium": ["Inter"]
+          },
+          "fontSize": {
+            "label-md": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "stat-value": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "body-md-medium": ["14px", { "lineHeight": "20px", "fontWeight": "500" }]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col font-body-md text-body-md selection:bg-surface-container-highest">
+<!-- TopNavBar (Shared Component JSON anchor) -->
+<header class="bg-surface-container-lowest docked full-width top-0 z-40 shadow-sm border-b border-outline-variant/30 sticky">
+<div class="flex justify-between items-center w-full px-6 py-3 max-w-full">
+<!-- Brand & Search cluster -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="confirmation_number">confirmation_number</span>
+</div>
+<span class="text-headline-lg font-headline-lg font-bold text-on-surface tracking-tight">EventHub</span>
+</div>
+<!-- Left Search Bar -->
+<div class="hidden lg:flex items-center relative w-72">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[18px]" data-icon="search">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 text-body-sm font-body-sm bg-surface-container-low rounded-lg border border-outline-variant/40 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all text-on-surface placeholder:text-on-surface-variant" placeholder="Search campus sessions, halls..." type="text"/>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-on-surface-variant hover:text-on-surface font-medium transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#explore">Explore Events</a>
+<!-- Active link: My Events -->
+<a class="text-secondary border-b-2 border-secondary pb-1 font-semibold transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#my-events">My Events</a>
+<a class="text-on-surface-variant hover:text-on-surface font-medium transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#sessions">My Sessions</a>
+<a class="text-on-surface-variant hover:text-on-surface font-medium transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#attendance">Attendance</a>
+</nav>
+<!-- Trailing Icon Actions & Profile -->
+<div class="flex items-center gap-3">
+<button aria-label="Notifications" class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors relative" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-secondary"></span>
+</button>
+<button aria-label="Switch Role or Mode" class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="swap_horiz">swap_horiz</span>
+</button>
+<div class="h-6 w-px bg-outline-variant/40 mx-1 hidden sm:block"></div>
+<!-- Student Profile Pill -->
+<div class="flex items-center gap-3 pl-1">
+<div class="relative">
+<div class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center font-semibold text-secondary text-body-sm border border-outline-variant/40">
+              MP
+            </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-surface-container-lowest"></span>
+</div>
+<div class="hidden sm:flex flex-col text-left">
+<span class="text-label-md font-label-md text-on-surface leading-tight font-semibold">Maya Patel</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant leading-tight">Computer Science</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Viewport -->
+<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+<!-- Header Greeting & Primary Action Bar -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-outline-variant/30">
+<div>
+<h1 class="text-headline-xl font-headline-xl text-on-surface tracking-tight">Good morning, Maya</h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="alarm">alarm</span>
+          You have 1 upcoming session starting in <strong class="font-semibold text-on-surface">45 minutes</strong>.
+        </p>
+</div>
+<!-- Single Primary CTA (Attendance Scanner Trigger) -->
+<button class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary hover:bg-primary-container font-label-md text-label-md px-5 py-2.5 rounded-lg transition-all duration-150 shadow-sm focus:outline-none focus:ring-4 focus:ring-secondary/20" onclick="toggleScannerModal(true)" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span>Open Attendance Scanner</span>
+</button>
+</section>
+<!-- Key Metrics Row (4 Stat Cards) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Metric 1: Registered Events -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-5 shadow-sm transition-all hover:border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-md font-label-md text-on-surface-variant">Registered Events</span>
+<span class="p-1.5 rounded-md bg-surface-container text-secondary">
+<span class="material-symbols-outlined text-[18px]" data-icon="event_available">event_available</span>
+</span>
+</div>
+<div class="text-stat-value font-stat-value text-on-surface">3</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-2 flex items-center gap-1">
+<span class="text-emerald-700 font-medium">Active</span> enrolled symposium tracks
+        </p>
+</div>
+<!-- Metric 2: Attended Sessions -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-5 shadow-sm transition-all hover:border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-md font-label-md text-on-surface-variant">Attended Sessions</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
+            83% Rate
+          </span>
+</div>
+<div class="text-stat-value font-stat-value text-on-surface">5<span class="text-headline-sm font-headline-sm text-on-surface-variant font-normal">/6</span></div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5 mt-3 overflow-hidden">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 83%"></div>
+</div>
+</div>
+<!-- Metric 3: Pending Feedback -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-5 shadow-sm transition-all hover:border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-md font-label-md text-on-surface-variant">Pending Feedback</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-amber-50 text-amber-800 font-semibold border border-amber-200">
+            Action Req.
+          </span>
+</div>
+<div class="text-stat-value font-stat-value text-on-surface">1 <span class="text-headline-sm font-headline-sm text-on-surface-variant font-normal">session</span></div>
+<p class="text-body-sm font-body-sm text-amber-800 mt-2 font-medium">Campus Hackathon 2026</p>
+</div>
+<!-- Metric 4: Certificates Earned -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-5 shadow-sm transition-all hover:border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-md font-label-md text-on-surface-variant">Certificates Earned</span>
+<span class="p-1.5 rounded-md bg-surface-container text-secondary">
+<span class="material-symbols-outlined text-[18px]" data-icon="workspace_premium">workspace_premium</span>
+</span>
+</div>
+<div class="text-stat-value font-stat-value text-on-surface">2</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-2">Verified collegiate credentials</p>
+</div>
+</section>
+<!-- Main Content Bento Grid (8 Col Left, 4 Col Right) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN: Schedule & Event List (8 Cols) -->
+<div class="lg:col-span-8 space-y-6">
+<!-- Next Session Highlight Card -->
+<section class="bg-surface-container-lowest border-2 border-secondary/30 rounded-xl p-6 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 transform translate-x-4 -translate-y-4 w-32 h-32 bg-secondary/5 rounded-full pointer-events-none"></div>
+<div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-secondary/10 text-secondary font-semibold">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+              UP NEXT TODAY
+            </span>
+<span class="text-label-md font-label-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="place">place</span>
+              Hall A, Science Quad
+            </span>
+</div>
+<h2 class="text-headline-lg font-headline-lg text-on-surface font-semibold tracking-tight">Keynote: Scaling Generative Systems</h2>
+<div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-body-md font-body-md text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="schedule">schedule</span>
+<span>Today, 10:00 AM - 11:30 AM</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="person_outline">person_outline</span>
+<span>Speaker: <strong class="text-on-surface font-semibold">Dr. Sarah Lin</strong> (Director, AI Lab)</span>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-2 text-body-sm font-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-emerald-600 text-[18px]" data-icon="verified_user">verified_user</span>
+<span>Check-in gates open 15 min prior to commencement</span>
+</div>
+<button class="inline-flex items-center justify-center gap-2 bg-secondary text-on-secondary hover:bg-secondary-container font-label-md text-label-md px-5 py-2 rounded-lg transition-colors font-medium shadow-sm" onclick="toggleScannerModal(true)" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="how_to_reg">how_to_reg</span>
+              Mark Attendance Now
+            </button>
+</div>
+</section>
+<!-- Tabbed Event List ('Upcoming', 'Completed') -->
+<section class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl shadow-sm overflow-hidden">
+<!-- Segmented Tab Header -->
+<div class="px-6 pt-5 pb-3 border-b border-outline-variant/30 flex items-center justify-between">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Registered Track Records</h3>
+<div class="flex bg-surface-container-low p-1 rounded-lg border border-outline-variant/30">
+<button class="px-3.5 py-1 text-label-md font-label-md rounded-md bg-surface-container-lowest text-secondary shadow-sm font-semibold transition-all" id="tab-upcoming-btn" onclick="switchTab('upcoming')" type="button">
+                Upcoming (2)
+              </button>
+<button class="px-3.5 py-1 text-label-md font-label-md rounded-md text-on-surface-variant hover:text-on-surface transition-all font-medium" id="tab-completed-btn" onclick="switchTab('completed')" type="button">
+                Completed (1)
+              </button>
+</div>
+</div>
+<!-- Tab Content: Upcoming -->
+<div class="divide-y divide-outline-variant/20" id="tab-upcoming-content">
+<!-- Event Item 1 -->
+<div class="p-6 hover:bg-surface-container-low/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
+                    Confirmed
+                  </span>
+<span class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="calendar_month">calendar_month</span>
+                    Oct 28, 2026
+                  </span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-semibold">AI &amp; Cloud Summit 2026</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-2 pt-1">
+<span>Attendance: <strong class="text-on-surface font-medium">1/3 marked</strong></span>
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span>Session 2 commences in Hall B</span>
+</p>
+</div>
+<div class="flex items-center gap-2 self-start md:self-center">
+<button class="px-3.5 py-1.5 rounded-lg border border-outline-variant/40 bg-surface-container-lowest text-on-surface text-label-md font-label-md font-medium hover:bg-surface-container-low transition-colors" type="button">
+                  View Ticket
+                </button>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-low text-secondary text-label-md font-label-md font-semibold hover:bg-surface-container transition-colors flex items-center gap-1" type="button">
+                  Schedule
+                  <span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Event Item 2 -->
+<div class="p-6 hover:bg-surface-container-low/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
+                    Confirmed
+                  </span>
+<span class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="calendar_month">calendar_month</span>
+                    Nov 02, 2026
+                  </span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-semibold">Full Stack Web Bootcamp</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-2 pt-1">
+<span>Attendance: <strong class="text-secondary font-medium">Ready</strong></span>
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span>Computer Lab 3 (Bring your laptop)</span>
+</p>
+</div>
+<div class="flex items-center gap-2 self-start md:self-center">
+<button class="px-3.5 py-1.5 rounded-lg border border-outline-variant/40 bg-surface-container-lowest text-on-surface text-label-md font-label-md font-medium hover:bg-surface-container-low transition-colors" type="button">
+                  View Ticket
+                </button>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-low text-secondary text-label-md font-label-md font-semibold hover:bg-surface-container transition-colors flex items-center gap-1" type="button">
+                  Schedule
+                  <span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Tab Content: Completed (Hidden by default) -->
+<div class="divide-y divide-outline-variant/20 hidden" id="tab-completed-content">
+<!-- Event Item 3 -->
+<div class="p-6 hover:bg-surface-container-low/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-semibold">
+                    Completed
+                  </span>
+<span class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="event_busy">event_busy</span>
+                    Sep 14, 2026
+                  </span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-semibold">Campus Hackathon 2026</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-2 pt-1">
+<span>Attended: <strong class="text-emerald-700 font-semibold">100% (All 4 Milestones)</strong></span>
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="text-amber-800 font-medium">Feedback required for badge unlocking</span>
+</p>
+</div>
+<div class="flex items-center gap-2 self-start md:self-center">
+<button class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-on-primary font-label-md text-label-md font-medium transition-colors shadow-sm flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="rate_review">rate_review</span>
+                  Submit Feedback
+                </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN: Digital Pass & Live Activity (4 Cols) -->
+<div class="lg:col-span-4 space-y-6">
+<!-- Digital Event Pass Card -->
+<section class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-6 shadow-sm flex flex-col items-center text-center relative overflow-hidden">
+<div class="w-full flex items-center justify-between pb-3 border-b border-outline-variant/30 text-left">
+<div>
+<span class="text-label-sm font-label-sm text-secondary font-bold tracking-wider">OFFICIAL PARTICIPANT PASS</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Academic Session 2026-27</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-[24px]" data-icon="nfc">nfc</span>
+</div>
+<!-- Digital Badge QR Visual -->
+<div class="my-5 p-3.5 bg-surface-container-lowest border border-outline-variant/50 rounded-xl shadow-inner relative flex flex-col items-center">
+<!-- Simulated High-Fidelity SVG QR -->
+<svg class="w-44 h-44 text-on-surface" fill="currentColor" viewbox="0 0 100 100">
+<!-- Corner Anchor 1 -->
+<rect fill="#0b1c30" height="26" rx="3" width="26" x="5" y="5"></rect>
+<rect fill="#ffffff" height="18" width="18" x="9" y="9"></rect>
+<rect fill="#0051d5" height="10" width="10" x="13" y="13"></rect>
+<!-- Corner Anchor 2 -->
+<rect fill="#0b1c30" height="26" rx="3" width="26" x="69" y="5"></rect>
+<rect fill="#ffffff" height="18" width="18" x="73" y="9"></rect>
+<rect fill="#0051d5" height="10" width="10" x="77" y="13"></rect>
+<!-- Corner Anchor 3 -->
+<rect fill="#0b1c30" height="26" rx="3" width="26" x="5" y="69"></rect>
+<rect fill="#ffffff" height="18" width="18" x="9" y="73"></rect>
+<rect fill="#0051d5" height="10" width="10" x="13" y="77"></rect>
+<!-- QR Data Pattern Matrix Blocks -->
+<rect fill="#0b1c30" height="6" width="6" x="36" y="8"></rect>
+<rect fill="#0b1c30" height="6" width="6" x="46" y="8"></rect>
+<rect fill="#0b1c30" height="6" width="6" x="56" y="8"></rect>
+<rect fill="#0051d5" height="6" width="8" x="36" y="20"></rect>
+<rect fill="#0b1c30" height="6" width="12" x="50" y="20"></rect>
+<rect fill="#0b1c30" height="6" width="12" x="8" y="38"></rect>
+<rect fill="#0051d5" height="8" width="8" x="24" y="38"></rect>
+<rect fill="#0b1c30" height="14" width="6" x="36" y="36"></rect>
+<rect fill="#0b1c30" height="6" width="16" x="46" y="36"></rect>
+<rect fill="#0b1c30" height="6" width="14" x="68" y="38"></rect>
+<rect fill="#0051d5" height="10" width="8" x="86" y="38"></rect>
+<rect fill="#0051d5" height="6" width="14" x="8" y="52"></rect>
+<rect fill="#0b1c30" height="8" width="8" x="38" y="54"></rect>
+<rect fill="#0051d5" height="12" width="10" x="52" y="50"></rect>
+<rect fill="#0b1c30" height="6" width="10" x="68" y="52"></rect>
+<rect fill="#0b1c30" height="6" width="12" x="82" y="54"></rect>
+<rect fill="#0b1c30" height="14" width="6" x="38" y="70"></rect>
+<rect fill="#0b1c30" height="8" width="14" x="50" y="72"></rect>
+<rect fill="#0051d5" height="12" width="8" x="68" y="70"></rect>
+<rect fill="#0b1c30" height="8" width="14" x="80" y="70"></rect>
+<rect fill="#0b1c30" height="8" width="18" x="46" y="86"></rect>
+<rect fill="#0b1c30" height="6" width="12" x="70" y="86"></rect>
+</svg>
+<span class="mt-2 text-label-sm font-label-sm font-mono tracking-widest text-on-surface-variant">#ST-2024-881</span>
+</div>
+<!-- Pass Details -->
+<div class="w-full space-y-2 text-left bg-surface-container-low p-3.5 rounded-lg border border-outline-variant/30">
+<div class="flex justify-between items-center text-body-sm font-body-sm">
+<span class="text-on-surface-variant">Attendee</span>
+<span class="font-semibold text-on-surface">Maya Patel</span>
+</div>
+<div class="flex justify-between items-center text-body-sm font-body-sm">
+<span class="text-on-surface-variant">Institution Roll</span>
+<span class="font-mono text-on-surface">CS-2024-0419</span>
+</div>
+<div class="flex justify-between items-center text-body-sm font-body-sm">
+<span class="text-on-surface-variant">Access Level</span>
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm text-secondary font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                All Campus Access
+              </span>
+</div>
+</div>
+<div class="mt-4 w-full flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-emerald-600" data-icon="check_circle">check_circle</span>
+              Auto-sync enabled
+            </span>
+<button class="text-secondary hover:underline font-medium text-label-sm font-label-sm" type="button">Download Wallet Pass</button>
+</div>
+</section>
+<!-- Recent Notifications -->
+<section class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-5 shadow-sm space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Recent Alerts</h3>
+<span class="text-label-sm font-label-sm text-secondary font-semibold">2 New</span>
+</div>
+<div class="space-y-3">
+<!-- Alert 1 -->
+<div class="p-3 rounded-lg bg-surface-container-low border-l-4 border-secondary flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5" data-icon="meeting_room">meeting_room</span>
+<div class="space-y-0.5">
+<p class="text-body-sm font-body-sm text-on-surface font-semibold">Room change for Kubernetes Lab</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Relocated to Room 304 (West Wing). Time remains unchanged.</p>
+<span class="text-label-sm font-label-sm text-on-surface-variant pt-1 block">18 mins ago</span>
+</div>
+</div>
+<!-- Alert 2 -->
+<div class="p-3 rounded-lg bg-surface-container-low border-l-4 border-amber-500 flex items-start gap-3">
+<span class="material-symbols-outlined text-amber-600 text-[20px] shrink-0 mt-0.5" data-icon="feedback">feedback</span>
+<div class="space-y-0.5">
+<p class="text-body-sm font-body-sm text-on-surface font-semibold">Feedback request for Morning Keynote</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Help speakers improve by providing a rapid 2-minute evaluation.</p>
+<span class="text-label-sm font-label-sm text-on-surface-variant pt-1 block">1 hour ago</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Interactive Attendance QR Scanner Modal (Simulated Level 3 Dialog) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm hidden transition-opacity" id="attendance-modal">
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[24px]" data-icon="qr_code_scanner">qr_code_scanner</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface font-semibold">Mark Session Attendance</h3>
+</div>
+<button class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors" onclick="toggleScannerModal(false)" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- Scanning Viewport Frame -->
+<div class="relative w-full aspect-square max-w-[280px] mx-auto bg-primary-container rounded-xl overflow-hidden flex items-center justify-center border-2 border-dashed border-outline">
+<div class="absolute inset-0 bg-primary/40"></div>
+<!-- Target Frame with Corner Brackets -->
+<div class="relative w-48 h-48 border-2 border-secondary/80 rounded-lg flex items-center justify-center">
+<div class="absolute -top-1 -left-1 w-4 h-4 border-t-4 border-l-4 border-secondary"></div>
+<div class="absolute -top-1 -right-1 w-4 h-4 border-t-4 border-r-4 border-secondary"></div>
+<div class="absolute -bottom-1 -left-1 w-4 h-4 border-b-4 border-l-4 border-secondary"></div>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 border-b-4 border-r-4 border-secondary"></div>
+<!-- Animated Laser Scan Bar -->
+<div class="w-full h-0.5 bg-secondary shadow-[0_0_8px_#0051d5] animate-bounce"></div>
+</div>
+<span class="absolute bottom-3 text-label-sm font-label-sm text-on-primary bg-primary/70 px-3 py-1 rounded-full">
+          Align Session Hall QR code
+        </span>
+</div>
+<!-- Verification Info Box -->
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/30 text-center">
+<p class="text-label-md font-label-md text-on-surface font-medium">Session: Keynote: Scaling Generative Systems</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Hall A • Location Verified via Campus Wi-Fi</p>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-3">
+<button class="flex-1 py-2.5 px-4 bg-primary text-on-primary hover:bg-primary-container rounded-lg font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-2" onclick="simulateScanSuccess()" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+          Confirm Check-In
+        </button>
+<button class="py-2.5 px-4 border border-outline-variant/40 rounded-lg text-on-surface font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors" onclick="toggleScannerModal(false)" type="button">
+          Cancel
+        </button>
+</div>
+</div>
+</div>
+<!-- Toast Notification for Interactions -->
+<div class="fixed bottom-6 right-6 z-50 bg-primary text-on-primary px-4 py-3 rounded-xl shadow-lg border border-outline/30 flex items-center gap-3 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none" id="toast">
+<span class="material-symbols-outlined text-emerald-400 text-[20px]" data-icon="verified">verified</span>
+<span class="text-body-sm font-body-sm font-medium" id="toast-message">Attendance verified successfully for Hall A!</span>
+</div>
+<!-- Vanilla JS Micro-Interactions -->
+<script>
+    function switchTab(tabKey) {
+      const upcomingBtn = document.getElementById('tab-upcoming-btn');
+      const completedBtn = document.getElementById('tab-completed-btn');
+      const upcomingContent = document.getElementById('tab-upcoming-content');
+      const completedContent = document.getElementById('tab-completed-content');
+
+      if (tabKey === 'upcoming') {
+        upcomingBtn.className = 'px-3.5 py-1 text-label-md font-label-md rounded-md bg-surface-container-lowest text-secondary shadow-sm font-semibold transition-all';
+        completedBtn.className = 'px-3.5 py-1 text-label-md font-label-md rounded-md text-on-surface-variant hover:text-on-surface transition-all font-medium';
+        upcomingContent.classList.remove('hidden');
+        completedContent.classList.add('hidden');
+      } else {
+        completedBtn.className = 'px-3.5 py-1 text-label-md font-label-md rounded-md bg-surface-container-lowest text-secondary shadow-sm font-semibold transition-all';
+        upcomingBtn.className = 'px-3.5 py-1 text-label-md font-label-md rounded-md text-on-surface-variant hover:text-on-surface transition-all font-medium';
+        completedContent.classList.remove('hidden');
+        upcomingContent.classList.add('hidden');
+      }
+    }
+
+    function toggleScannerModal(show) {
+      const modal = document.getElementById('attendance-modal');
+      if (show) {
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function simulateScanSuccess() {
+      toggleScannerModal(false);
+      const toast = document.getElementById('toast');
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3500);
+    }
+  </script>
+</body></html>

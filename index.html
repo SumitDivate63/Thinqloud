@@ -2,16 +2,88 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ThinqSummit 2026 | Global Cloud & AI Tech Conference</title>
-    <meta name="description" content="Join 5,000+ tech leaders, developers, and visionaries at ThinqSummit 2026. Explore Keynotes, AI & Cloud Architecture, Live Streams, and Interactive Workshops." />
-    <!-- Fonts -->
+    <title>EventHub — Campus & Enterprise Event Operations Platform</title>
+    <meta name="description" content="Centralized event creation, Google OAuth SSO, dynamic QR attendance verification, participant schedule management, and live organizer analytics." />
+    
+    <!-- Material Symbols Outlined & Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS with Forms and Container Queries -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "secondary-fixed": "#dbe1ff",
+                "surface-variant": "#d3e4fe",
+                "on-tertiary-fixed": "#001a42",
+                "surface-container-high": "#dce9ff",
+                "on-tertiary": "#ffffff",
+                "surface-container-highest": "#d3e4fe",
+                "on-surface": "#0b1c30",
+                "on-secondary": "#ffffff",
+                "error": "#ba1a1a",
+                "inverse-surface": "#213145",
+                "primary-fixed": "#dae2fd",
+                "on-primary-fixed": "#131b2e",
+                "on-background": "#0b1c30",
+                "background": "#f8f9ff",
+                "on-error-container": "#93000a",
+                "surface-bright": "#f8f9ff",
+                "on-tertiary-fixed-variant": "#004395",
+                "tertiary-fixed-dim": "#adc6ff",
+                "on-surface-variant": "#45464d",
+                "error-container": "#ffdad6",
+                "on-primary-fixed-variant": "#3f465c",
+                "primary-container": "#131b2e",
+                "inverse-primary": "#bec6e0",
+                "surface-container-lowest": "#ffffff",
+                "on-primary-container": "#7c839b",
+                "secondary": "#0051d5",
+                "on-error": "#ffffff",
+                "surface-container": "#e5eeff",
+                "on-secondary-fixed-variant": "#003ea8",
+                "tertiary-container": "#001a42",
+                "outline-variant": "#c6c6cd",
+                "primary-fixed-dim": "#bec6e0",
+                "tertiary-fixed": "#d8e2ff",
+                "surface-tint": "#565e74",
+                "surface-dim": "#cbdbf5",
+                "surface-container-low": "#eff4ff",
+                "on-tertiary-container": "#3980f4",
+                "inverse-on-surface": "#eaf1ff",
+                "tertiary": "#000000",
+                "primary": "#000000",
+                "outline": "#76777d",
+                "secondary-fixed-dim": "#b4c5ff",
+                "on-secondary-fixed": "#00174b",
+                "on-primary": "#ffffff",
+                "secondary-container": "#316bf3",
+                "surface": "#f8f9ff",
+                "on-secondary-container": "#fefcff"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+              },
+              "fontFamily": {
+                "sans": ["Inter", "sans-serif"]
+              }
+            }
+          }
+        }
+    </script>
   </head>
-  <body>
+  <body class="bg-background text-on-surface antialiased min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
