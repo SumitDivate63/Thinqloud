@@ -15,15 +15,22 @@ const firebaseConfig = {
   measurementId: "G-G4RTTN0YF5"
 };
 
-// Initialize Firebase
+// Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase services
+// Initialize Firebase Core Services (100% Free on Spark Plan)
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
-// Initialize Analytics conditionally (only in supported environments)
+// Safe optional initialization for Storage (guarantees zero-cost deployment on Spark plan)
+let storage = null;
+try {
+  storage = getStorage(app);
+} catch (e) {
+  console.warn("Firebase Storage optional initialization skipped on free tier.");
+}
+
+// Initialize Analytics conditionally
 let analytics = null;
 if (typeof window !== "undefined") {
   isSupported().then((supported) => {
