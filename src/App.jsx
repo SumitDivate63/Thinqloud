@@ -13,12 +13,15 @@ import QRAttendanceModal from './components/QRAttendanceModal';
 import FeedbackModal from './components/FeedbackModal';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { seedFirestoreDatabase } from './utils/seedFirebase';
+import { Database, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('schedule');
   const [theme, setTheme] = useState('default');
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState('participant'); // 'participant' | 'organizer' | 'admin'
+  const [dbSeedStatus, setDbSeedStatus] = useState(null);
 
   // Modals
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
@@ -46,6 +49,15 @@ export default function App() {
       return ['sess-101', 'sess-102'];
     }
   });
+
+  // Automatically trigger database seed on launch
+  useEffect(() => {
+    seedFirestoreDatabase().then(res => {
+      if (res.success) {
+        setDbSeedStatus("Firebase Firestore collections initialized!");
+      }
+    });
+  }, []);
 
   // Listen to theme changes
   useEffect(() => {
@@ -88,6 +100,14 @@ export default function App() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
+      {/* Top Banner Notice for Database Status */}
+      {dbSeedStatus && (
+        <div style={{ background: 'linear-gradient(90deg, #6366f1 0%, #06b6d4 100%)', color: '#fff', padding: '0.35rem 1rem', fontSize: '0.8rem', textAlign: 'center', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+          <CheckCircle2 size={14} />
+          <span>{dbSeedStatus} (Users, Events, Sessions, Speakers, and Q&A Ready)</span>
+        </div>
+      )}
+
       {/* Navbar */}
       <Navbar
         activeTab={activeTab}
