@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == "admin";
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    // 1. Users collection
+    match /users/{uid} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(uid) || isAdmin();
+    }
+
+    // 2. Events collection
+    match /events/{eventId} {
+      // Anyone authenticated can read published events; Admins can read all
+      allow read: if resource.data.status == "PUBLISHED" || isAdmin();
+      // Only Admin can create, update, or delete events
+      allow create, update, delete: if isAdmin();
+      
+      // Sessions subcollection
+      match /sessions/{sessionId} {
+        allow read: if isAuthenticated();
+        allow write: if isAdmin();
+      }
+    }
+
+    // 3. Registrations collection
+    // Document ID format: {uid}_{eventId}
+    match /registrations/{registrationId} {
+      // Read allowed for owner participant or admin
+      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      // Create allowed only for authenticated user registering for themselves
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      // Direct updates and deletes DENIED to all clients (admin overrides must go via Cloud Function)
+      allow update, delete: if false;
+    }
+
+    // 4. Attendance collection
+    // Document ID format: {uid}_{eventId}
+    match /attendance/{attendanceId} {
+      // Read allowed for owner participant or admin
+      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      // Direct client writes DENIED to ALL clients (must go through markAttendance Cloud Function using Admin SDK)
+      allow create, update, delete: if false;
+    }
+
+    // 5. Feedback collection
+    // Document ID format: {uid}_{eventId}
+    match /feedback/{feedbackId} {
+      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
+      // Create allowed only if user is owner AND an attendance document exists for this user+event
+      allow create: if isAuthenticated() 
+        && request.resource.data.uid == request.auth.uid
+        && exists(/databases/$(database)/documents/attendance/$(request.resource.data.uid + '_' + request.resource.data.eventId));
+      allow update, delete: if isAdmin();
+    }
+
+  }
+}

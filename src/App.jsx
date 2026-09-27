@@ -4,7 +4,6 @@ import StitchLandingPage from './components/stitch/StitchLandingPage';
 import StitchOrganizerDashboard from './components/stitch/StitchOrganizerDashboard';
 import StitchOrganizerLiveQR from './components/stitch/StitchOrganizerLiveQR';
 import StitchParticipantDashboard from './components/stitch/StitchParticipantDashboard';
-import StitchParticipantQRScanner from './components/stitch/StitchParticipantQRScanner';
 import StitchOAuthModal from './components/stitch/StitchOAuthModal';
 import StitchEventDetails from './components/stitch/StitchEventDetails';
 import StitchCreateEvent from './components/stitch/StitchCreateEvent';
@@ -12,148 +11,246 @@ import StitchAdminOperations from './components/stitch/StitchAdminOperations';
 
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { seedFirestoreDatabase } from './utils/seedFirebase';
+import { resolveUserRole, HARDCODED_ADMIN_EMAIL, logoutUser } from './lib/roleAuth';
+import AdminAttendanceScannerPage from './app/(admin)/scanner/page';
+import UserDigitalPassPage from './app/(user)/my-pass/page';
 
 export default function App() {
-  // Views: 'landing' | 'participant_dashboard' | 'organizer_dashboard' | 'organizer_live_qr' | 'admin_operations' | 'event_details'
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userRole, setUserRole] = useState('user'); // 'user' | 'admin'
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Active Panel Navigation
+  // Admin Views: 'admin_dashboard' | 'admin_scanner' | 'admin_ops'
+  // User Views: 'landing' | 'my_pass' | 'event_details'
   const [activeView, setActiveView] = useState('landing');
   const [selectedEventId, setSelectedEventId] = useState('event-1');
-  const [currentUser, setCurrentUser] = useState(null);
 
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
   const [isCreateEventOpen, setIsCreateEventOpen] = useState(false);
 
-  // Saved Session Bookmarks
-  const [bookmarks, setBookmarks] = useState(['sess-101', 'sess-102']);
-
-  // Auto seed database on initial load
+  // Auth state listener with strict role resolution
   useEffect(() => {
-    seedFirestoreDatabase();
-  }, []);
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      if (u) {
+        setCurrentUser(u);
+        const { role, isAdmin: adminFlag } = await resolveUserRole(u);
+        setUserRole(role);
+        setIsAdmin(adminFlag);
 
-  // Firebase auth state listener
-  useEffect(() => {
-    try {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user) setCurrentUser(user);
-      });
-      return () => unsubscribe();
-    } catch (e) {}
+        // Auto redirect admin to admin panel on login if sumitdivate3@gmail.com
+        if (adminFlag) {
+          setActiveView('admin_dashboard');
+        }
+      } else {
+        setCurrentUser(null);
+        setUserRole('user');
+        setIsAdmin(false);
+        setActiveView('landing');
+      }
+    });
+    return () => unsubscribe();
   }, []);
-
-  const handleRemoveBookmark = (id) => {
-    setBookmarks(prev => prev.filter(b => b !== id));
-  };
 
   return (
     <div className="min-h-screen bg-background text-on-surface flex flex-col justify-between font-sans selection:bg-secondary-fixed selection:text-on-secondary-fixed">
       
-      {/* EventHub Top Utility Bar */}
-      <StitchHeader
-        activeView={activeView}
-        setActiveView={setActiveView}
-        currentUser={currentUser}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onOpenQRScanner={() => setIsQRScannerOpen(true)}
-      />
+      {/* Top Navigation Bar — Role Adaptive */}
+      <header className={`sticky top-0 z-50 w-full border-b px-4 md:px-8 py-3.5 flex items-center justify-between shadow-sm transition-colors ${
+        isAdmin ? 'bg-slate-950 text-white border-slate-800' : 'bg-surface-container-lowest border-outline-variant/60'
+      }`}>
+        
+        {/* Brand Logo */}
+        <div onClick={() => setActiveView(isAdmin ? 'admin_dashboard' : 'landing')} className="flex items-center gap-3 cursor-pointer group">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md ${
+            isAdmin ? 'bg-rose-600' : 'bg-secondary'
+          }`}>
+            <span className="material-symbols-outlined text-[24px]">
+              {isAdmin ? 'admin_panel_settings' : 'calendar_today'}
+            </span>
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-bold tracking-tight">EventHub</span>
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                isAdmin ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-surface-container text-secondary'
+              }`}>
+                {isAdmin ? 'ADMIN PANEL (sumitdivate3@gmail.com)' : 'USER PANEL'}
+              </span>
+            </div>
+            <p className={`text-xs ${isAdmin ? 'text-slate-400' : 'text-on-surface-variant'}`}>
+              {isAdmin ? 'Single Admin Governance & Live Entrance Scanner' : 'Campus & Enterprise Event Discovery'}
+            </p>
+          </div>
+        </div>
 
-      {/* Main View Router */}
+        {/* Center Nav Links */}
+        <nav className="hidden lg:flex items-center gap-1">
+          {isAdmin ? (
+            <>
+              <button
+                onClick={() => setActiveView('admin_dashboard')}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+                  activeView === 'admin_dashboard' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[18px]">dashboard</span>
+                <span>Dashboard</span>
+              </button>
+              <button
+                onClick={() => setActiveView('admin_scanner')}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-bold transition-all ${
+                  activeView === 'admin_scanner' ? 'bg-emerald-600 text-white shadow-md' : 'bg-emerald-700/40 text-emerald-300 hover:bg-emerald-600 hover:text-white'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+                <span>Live Camera Scanner</span>
+              </button>
+              <button
+                onClick={() => setActiveView('admin_ops')}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+                  activeView === 'admin_ops' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[18px]">security</span>
+                <span>Security Rules</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => setActiveView('landing')}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  activeView === 'landing' ? 'bg-surface-container-low text-secondary font-semibold' : 'text-on-surface-variant hover:text-on-surface'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[18px]">explore</span>
+                <span>Browse Events</span>
+              </button>
+              <button
+                onClick={() => setActiveView('my_pass')}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  activeView === 'my_pass' ? 'bg-surface-container-low text-secondary font-semibold' : 'text-on-surface-variant hover:text-on-surface'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[18px]">badge</span>
+                <span>My Digital Pass & Status</span>
+              </button>
+            </>
+          )}
+        </nav>
+
+        {/* Right Auth Controls */}
+        <div className="flex items-center gap-3">
+          {isAdmin && (
+            <button
+              onClick={() => setIsCreateEventOpen(true)}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 shadow-sm"
+            >
+              <span className="material-symbols-outlined text-[16px]">add_circle</span>
+              <span>Create Event</span>
+            </button>
+          )}
+
+          {currentUser ? (
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono px-2.5 py-1 rounded bg-surface-container text-on-surface font-semibold hidden md:inline">
+                {currentUser.email}
+              </span>
+              <button
+                onClick={logoutUser}
+                className="px-3 py-1.5 rounded-lg bg-surface-container-low border border-outline-variant text-xs font-semibold hover:text-error"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsAuthOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-on-secondary font-semibold text-sm hover:bg-secondary-container shadow-sm"
+            >
+              <span className="material-symbols-outlined text-[18px]">lock_open</span>
+              <span>Sign In</span>
+            </button>
+          )}
+        </div>
+
+      </header>
+
+      {/* Main Content View Switcher */}
       <main className="flex-1">
-        {activeView === 'landing' && (
+        
+        {/* User Views */}
+        {!isAdmin && activeView === 'landing' && (
           <StitchLandingPage
             onSelectEvent={(id) => {
               setSelectedEventId(id);
               setActiveView('event_details');
             }}
             onRegisterEvent={(id) => {
-              if (!currentUser) {
-                setIsAuthOpen(true);
-              } else {
-                setActiveView('participant_dashboard');
-              }
+              if (!currentUser) setIsAuthOpen(true);
+              else setActiveView('my_pass');
             }}
-            onOpenQRScanner={() => setIsQRScannerOpen(true)}
+            onOpenQRScanner={() => setActiveView('my_pass')}
           />
         )}
 
-        {activeView === 'event_details' && (
+        {!isAdmin && activeView === 'event_details' && (
           <StitchEventDetails
             eventId={selectedEventId}
             onBack={() => setActiveView('landing')}
             onRegister={() => {
-              if (!currentUser) {
-                setIsAuthOpen(true);
-              } else {
-                setActiveView('participant_dashboard');
-              }
+              if (!currentUser) setIsAuthOpen(true);
+              else setActiveView('my_pass');
             }}
           />
         )}
 
-        {activeView === 'participant_dashboard' && (
-          <StitchParticipantDashboard
-            currentUser={currentUser}
-            onOpenQRScanner={() => setIsQRScannerOpen(true)}
-            bookmarks={bookmarks}
-            onRemoveBookmark={handleRemoveBookmark}
-          />
+        {!isAdmin && activeView === 'my_pass' && (
+          <UserDigitalPassPage />
         )}
 
-        {activeView === 'organizer_dashboard' && (
+        {/* Admin Views (sumitdivate3@gmail.com) */}
+        {isAdmin && activeView === 'admin_dashboard' && (
           <StitchOrganizerDashboard
-            onLaunchLiveQR={() => setActiveView('organizer_live_qr')}
+            onLaunchLiveQR={() => setActiveView('admin_scanner')}
             onCreateEvent={() => setIsCreateEventOpen(true)}
           />
         )}
 
-        {activeView === 'organizer_live_qr' && (
-          <StitchOrganizerLiveQR
-            onClose={() => setActiveView('organizer_dashboard')}
-          />
+        {isAdmin && activeView === 'admin_scanner' && (
+          <AdminAttendanceScannerPage />
         )}
 
-        {activeView === 'admin_operations' && (
+        {isAdmin && activeView === 'admin_ops' && (
           <StitchAdminOperations />
         )}
+
       </main>
 
       {/* Institutional Footer */}
-      <footer className="w-full py-6 px-6 bg-surface-container-lowest border-t border-outline-variant/60 text-center">
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs text-on-surface-variant font-medium">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[16px] text-secondary">verified</span>
-            <span>EventHub Enterprise Operations • Protected by Zero-Trust Identity Governance</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-secondary transition-colors">Help & Campus Support</a>
-            <span>•</span>
-            <a href="#" className="hover:text-secondary transition-colors">Privacy Policy</a>
-            <span>•</span>
-            <a href="#" className="hover:text-secondary transition-colors">Audit Console</a>
-          </div>
-        </div>
+      <footer className="w-full py-4 px-6 bg-surface-container-lowest border-t border-outline-variant/60 text-center text-xs text-on-surface-variant font-medium">
+        <span>Event Management Platform • Single Admin (<strong className="text-secondary">{HARDCODED_ADMIN_EMAIL}</strong>) & Participant Role Resolution</span>
       </footer>
 
       {/* Modals */}
       <StitchOAuthModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
-        onAuthSuccess={(u) => setCurrentUser(u)}
+        onAuthSuccess={(u) => {
+          if (u.email?.toLowerCase() === HARDCODED_ADMIN_EMAIL.toLowerCase()) {
+            setActiveView('admin_dashboard');
+          } else {
+            setActiveView('landing');
+          }
+        }}
       />
-
-      {isQRScannerOpen && (
-        <StitchParticipantQRScanner
-          onClose={() => setIsQRScannerOpen(false)}
-          currentUser={currentUser}
-        />
-      )}
 
       {isCreateEventOpen && (
         <StitchCreateEvent
           onClose={() => setIsCreateEventOpen(false)}
-          onCreated={() => setActiveView('organizer_dashboard')}
+          onCreated={() => setActiveView('admin_dashboard')}
         />
       )}
 
