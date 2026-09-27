@@ -72,7 +72,14 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
     setFeedbackSubmitting(true);
     setFeedbackError('');
     try {
-      await submitEventFeedback({ uid: currentUser.uid, eventId: event.id, rating: feedbackRating, comment: feedbackComment });
+      await submitEventFeedback({
+        uid: currentUser.uid,
+        eventId: event.id,
+        rating: feedbackRating,
+        comment: feedbackComment,
+        userEmail: currentUser.email || '',
+        userName: currentUser.displayName || ''
+      });
       setFeedbackSubmitted(true);
     } catch (err) {
       setFeedbackError(err.message || 'Could not submit feedback. Please try again.');

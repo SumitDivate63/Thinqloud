@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase';
-import { collection, query, orderBy, limit, onSnapshot, getDocs } from 'firebase/firestore';
+import { collection, query, where, orderBy, limit, onSnapshot, getDocs } from 'firebase/firestore';
 
 export default function StitchOrganizerDashboard({ events = [], onLaunchLiveQR, onCreateEvent, onEditEvent }) {
   const [totals, setTotals] = useState({ registrations: 0, attendance: 0, feedbackCount: 0, avgRating: null });
   const [recentRegistrations, setRecentRegistrations] = useState([]);
+  const [feedbackEventId, setFeedbackEventId] = useState('');
+  const [feedbackList, setFeedbackList] = useState([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -42,9 +44,31 @@ export default function StitchOrganizerDashboard({ events = [], onLaunchLiveQR, 
     return () => unsub();
   }, []);
 
+  // Feedback for a single event (filtered) or the most recent across all
+  // events (no filter selected). The per-event query sorts client-side
+  // instead of using orderBy() so it doesn't need a composite index
+  // (where(eventId) + orderBy(submittedAt) on different fields requires one).
+  useEffect(() => {
+    const q = feedbackEventId
+      ? query(collection(db, 'feedback'), where('eventId', '==', feedbackEventId))
+      : query(collection(db, 'feedback'), orderBy('submittedAt', 'desc'), limit(10));
+    const unsub = onSnapshot(q, (snapshot) => {
+      const list = snapshot.docs.map(d => d.data());
+      if (feedbackEventId) {
+        list.sort((a, b) => (b.submittedAt?.toMillis?.() || 0) - (a.submittedAt?.toMillis?.() || 0));
+      }
+      setFeedbackList(list);
+    }, () => setFeedbackList([]));
+    return () => unsub();
+  }, [feedbackEventId]);
+
   const attendanceRate = totals.registrations > 0
     ? Math.round((totals.attendance / totals.registrations) * 100)
     : 0;
+
+  const feedbackAvgRating = feedbackList.length > 0
+    ? (feedbackList.reduce((sum, fb) => sum + (Number(fb.rating) || 0), 0) / feedbackList.length).toFixed(1)
+    : null;
 
   const eventTitleById = events.reduce((acc, ev) => {
     acc[ev.id] = ev.title;
@@ -182,6 +206,55 @@ export default function StitchOrganizerDashboard({ events = [], onLaunchLiveQR, 
           </div>
         </div>
 
+      </div>
+
+      {/* Feedback Panel */}
+      <div className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-6 shadow-sm space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-outline-variant/40 pb-3">
+          <h3 className="text-base font-bold text-on-surface flex items-center gap-2">
+            <span className="material-symbols-outlined text-amber-500 text-[20px]">rate_review</span>
+            <span>Feedback</span>
+            {feedbackAvgRating && (
+              <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[11px] font-bold">
+                {feedbackAvgRating} / 5 avg
+              </span>
+            )}
+          </h3>
+
+          <select
+            value={feedbackEventId}
+            onChange={(e) => setFeedbackEventId(e.target.value)}
+            className="w-full md:w-64 px-3 py-1.5 bg-surface-container-low border border-outline-variant/60 rounded-lg text-xs text-on-surface font-semibold"
+          >
+            <option value="">All Events (recent)</option>
+            {events.map(ev => (
+              <option key={ev.id} value={ev.id}>{ev.title}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+          {feedbackList.length === 0 && (
+            <div className="text-xs text-on-surface-variant text-center py-6">No feedback submitted yet.</div>
+          )}
+          {feedbackList.map((fb, i) => (
+            <div key={i} className="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant/40 space-y-1.5">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1 text-amber-500 text-sm">
+                  {'★'.repeat(Number(fb.rating) || 0)}
+                  <span className="text-on-surface-variant text-[11px] font-semibold ml-1">({fb.rating}/5)</span>
+                </div>
+                {!feedbackEventId && (
+                  <span className="text-[11px] text-secondary font-semibold">{eventTitleById[fb.eventId] || fb.eventId}</span>
+                )}
+              </div>
+              {fb.comment && (
+                <p className="text-xs text-on-surface leading-relaxed">{fb.comment}</p>
+              )}
+              <p className="text-[11px] text-on-surface-variant">{fb.userEmail}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
     </div>

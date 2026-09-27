@@ -143,7 +143,7 @@ export async function markAttendanceForPass({ uid, eventId, registrationId, admi
 // detected the same way as registration/attendance: firestore.rules denies
 // `update` on feedback for non-admins, so a second write is denied rather
 // than needing a pre-read of the (possibly not-yet-existing) feedback doc.
-export async function submitEventFeedback({ uid, eventId, rating, comment }) {
+export async function submitEventFeedback({ uid, eventId, rating, comment, userEmail, userName }) {
   const attRef = doc(db, 'attendance', `${uid}_${eventId}`);
   const attSnap = await getDoc(attRef);
   if (!attSnap.exists()) {
@@ -158,6 +158,8 @@ export async function submitEventFeedback({ uid, eventId, rating, comment }) {
       eventId,
       rating: Number(rating),
       comment: comment || '',
+      userEmail: userEmail || '',
+      userName: userName || '',
       submittedAt: serverTimestamp()
     });
   } catch (err) {
