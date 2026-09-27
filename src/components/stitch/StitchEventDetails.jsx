@@ -1,7 +1,11 @@
 import React from 'react';
 import { SESSIONS, SPEAKERS } from '../../data/conferenceData';
+import { DEFAULT_EVENTS } from '../../data/initialEvents';
 
-export default function StitchEventDetails({ eventId, onBack, onRegister }) {
+export default function StitchEventDetails({ eventId, events = [], onBack, onRegister }) {
+  const eventsList = events && events.length > 0 ? events : DEFAULT_EVENTS;
+  const currentEvent = eventsList.find(e => (e.id === eventId || e.eventId === eventId)) || eventsList[0];
+
   return (
     <div className="w-full bg-background min-h-screen p-4 md:p-8 space-y-6">
       
@@ -20,14 +24,14 @@ export default function StitchEventDetails({ eventId, onBack, onRegister }) {
       {/* Main Banner Header */}
       <div className="relative rounded-2xl overflow-hidden shadow-lg border border-outline-variant/60 h-64 md:h-80">
         <img
-          src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80"
-          alt="ThinqSummit 2026"
+          src={currentEvent.banner || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80"}
+          alt={currentEvent.title}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-on-surface/90 via-on-surface/40 to-transparent p-6 md:p-8 flex flex-col justify-end text-on-primary">
-          <span className="text-xs font-bold text-secondary-fixed uppercase tracking-wider">Enterprise Tech & AI Flagship</span>
-          <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight mt-1">ThinqSummit 2026: Global Cloud & AI Architecture</h1>
-          <p className="text-xs md:text-sm text-white/80 mt-1">November 12 - 14, 2026 • Moscone Center South, San Francisco & Virtual Stream</p>
+          <span className="text-xs font-bold text-secondary-fixed uppercase tracking-wider">{currentEvent.category}</span>
+          <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight mt-1">{currentEvent.title}</h1>
+          <p className="text-xs md:text-sm text-white/80 mt-1">{currentEvent.date} • {currentEvent.location}</p>
         </div>
       </div>
 
@@ -39,7 +43,7 @@ export default function StitchEventDetails({ eventId, onBack, onRegister }) {
           <div className="space-y-2">
             <h3 className="text-lg font-bold text-on-surface">About the Event</h3>
             <p className="text-sm text-on-surface-variant leading-relaxed">
-              Join 8,500+ senior cloud architects, AI engineers, and technology leaders for 3 days of deep-dive keynotes, hands-on workshops, and zero-trust security strategy. Powered by automated Google OAuth registration, dynamic QR attendance verification, and live analytics.
+              {currentEvent.description || 'Join senior cloud architects, AI engineers, and technology leaders for keynotes, workshops, and zero-trust security strategy.'}
             </p>
           </div>
 

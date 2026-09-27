@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from '../../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
+import { DEFAULT_EVENTS } from '../../../data/initialEvents';
 
-export default function UserDigitalPassPage({ registeredEventIds = ['event-1'] }) {
+export default function UserDigitalPassPage({ registeredEventIds = ['event-1'], events = [] }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [selectedEventId, setSelectedEventId] = useState(registeredEventIds[0] || 'event-1');
   const [attendanceStatus, setAttendanceStatus] = useState(null);
@@ -13,29 +14,12 @@ export default function UserDigitalPassPage({ registeredEventIds = ['event-1'] }
   const [feedbackRating, setFeedbackRating] = useState(5);
   const [feedbackComment, setFeedbackComment] = useState('');
 
-  const sampleEventsMap = {
-    'event-1': {
-      id: 'event-1',
-      title: 'ThinqSummit 2026: Global Cloud & AI Architecture',
-      category: 'Enterprise Tech',
-      date: 'November 12 - 14, 2026',
-      location: 'Moscone Center, San Francisco & Online'
-    },
-    'event-2': {
-      id: 'event-2',
-      title: 'Autonomous AI Agents & Neural Consensus Symposium',
-      category: 'Hackathons & AI',
-      date: 'November 13, 2026',
-      location: 'Stage 2 — AI Hub'
-    },
-    'event-3': {
-      id: 'event-3',
-      title: 'Zero-Trust Kernel & eBPF Security Operations Workshop',
-      category: 'Academic & Research',
-      date: 'November 14, 2026',
-      location: 'Stage 4 — Security Lab'
-    }
-  };
+  const eventsList = events && events.length > 0 ? events : DEFAULT_EVENTS;
+  const eventsMap = eventsList.reduce((acc, ev) => {
+    const key = ev.id || ev.eventId;
+    acc[key] = ev;
+    return acc;
+  }, {});
 
   useEffect(() => {
     if (registeredEventIds.length > 0 && !registeredEventIds.includes(selectedEventId)) {
@@ -61,7 +45,7 @@ export default function UserDigitalPassPage({ registeredEventIds = ['event-1'] }
     return () => unsub();
   }, [selectedEventId]);
 
-  const currentEvent = sampleEventsMap[selectedEventId] || sampleEventsMap['event-1'];
+  const currentEvent = eventsMap[selectedEventId] || eventsList[0];
 
   const samplePassToken = currentUser 
     ? btoa(JSON.stringify({ registrationId: `${currentUser.uid}_${currentEvent.id}`, uid: currentUser.uid, eventId: currentEvent.id, ts: Date.now() }))
@@ -91,8 +75,7 @@ export default function UserDigitalPassPage({ registeredEventIds = ['event-1'] }
         {/* Registered Event Selector Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
           {registeredEventIds.map(evId => {
-            const ev = sampleEventsMap[evId];
-            if (!ev) return null;
+            const ev = eventsMap[evId];
             const isSelected = selectedEventId === evId;
             return (
               <button
@@ -104,7 +87,7 @@ export default function UserDigitalPassPage({ registeredEventIds = ['event-1'] }
                     : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high'
                 }`}
               >
-                {evId === 'event-1' ? 'ThinqSummit' : evId === 'event-2' ? 'AI Symposium' : 'Zero-Trust Lab'}
+                {ev?.title || evId}
               </button>
             );
           })}

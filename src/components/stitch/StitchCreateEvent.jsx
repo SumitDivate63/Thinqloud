@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { createNewEvent } from '../../data/initialEvents';
 
 export default function StitchCreateEvent({ onClose, onCreated }) {
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     category: 'Enterprise Tech',
@@ -11,10 +13,18 @@ export default function StitchCreateEvent({ onClose, onCreated }) {
     description: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (onCreated) onCreated(formData);
-    onClose();
+    setIsSubmitting(true);
+    try {
+      const createdEvent = await createNewEvent(formData);
+      if (onCreated) onCreated(createdEvent);
+    } catch (err) {
+      console.error('Failed to create event:', err);
+    } finally {
+      setIsSubmitting(false);
+      onClose();
+    }
   };
 
   return (

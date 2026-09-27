@@ -39,6 +39,23 @@ export async function seedFirestoreDatabase() {
     }
 
     // 2. Seed Events Collection
+    await setDoc(doc(db, 'events', 'event-abc'), {
+      id: 'event-abc',
+      eventId: 'event-abc',
+      title: 'ABC',
+      category: 'Enterprise Tech',
+      date: 'Nov 18, 2026',
+      location: 'Moscone Center South, San Francisco',
+      organizer: 'ThinqCloud Admin Panel',
+      capacity: '500 Capacity',
+      registeredCount: 120,
+      banner: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80',
+      badge: 'Admin Created Event',
+      status: 'PUBLISHED',
+      description: 'Event ABC created from Admin Panel and synced across Database & User Panel.',
+      createdAt: new Date().toISOString()
+    }, { merge: true });
+
     await setDoc(doc(db, 'events', 'event-2026-sf'), {
       eventId: 'event-2026-sf',
       title: CONFERENCE_INFO.name,

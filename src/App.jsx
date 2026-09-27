@@ -9,9 +9,11 @@ import StitchEventDetails from './components/stitch/StitchEventDetails';
 import StitchCreateEvent from './components/stitch/StitchCreateEvent';
 import StitchAdminOperations from './components/stitch/StitchAdminOperations';
 
-import { auth } from './firebase';
+import { auth, db } from './firebase';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { resolveUserRole, HARDCODED_ADMIN_EMAIL, logoutUser } from './lib/roleAuth';
+import { DEFAULT_EVENTS, getLocalEvents, saveLocalEvents } from './data/initialEvents';
 import AdminAttendanceScannerPage from './app/(admin)/scanner/page';
 import UserDigitalPassPage from './app/(user)/my-pass/page';
 
@@ -19,6 +21,41 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState('user'); // 'user' | 'admin'
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // Dynamic Events State synced with Firestore DB & LocalStorage
+  const [events, setEvents] = useState(() => getLocalEvents());
+
+  // Subscribe to real-time Firestore events collection
+  useEffect(() => {
+    try {
+      const unsub = onSnapshot(collection(db, 'events'), (snapshot) => {
+        if (!snapshot.empty) {
+          const dbEvents = snapshot.docs.map(docSnap => ({
+            id: docSnap.id,
+            ...docSnap.data()
+          }));
+          
+          setEvents(prevEvents => {
+            const map = new Map();
+            // Default events first
+            DEFAULT_EVENTS.forEach(e => map.set(e.id, e));
+            // Local events second
+            prevEvents.forEach(e => map.set(e.id, e));
+            // Firestore events top priority
+            dbEvents.forEach(e => map.set(e.id, e));
+            const merged = Array.from(map.values());
+            saveLocalEvents(merged);
+            return merged;
+          });
+        }
+      }, (err) => {
+        console.warn('Firestore events listener error (using local storage fallback):', err);
+      });
+      return () => unsub();
+    } catch (e) {
+      console.warn('Firestore events snapshot failed:', e);
+    }
+  }, []);
 
   // Active Panel Navigation
   // Admin Views: 'admin_dashboard' | 'admin_scanner' | 'admin_ops'
@@ -204,6 +241,7 @@ export default function App() {
         {/* User Views */}
         {!isAdmin && activeView === 'landing' && (
           <StitchLandingPage
+            events={events}
             registeredEventIds={registeredEventIds}
             onConfirmRegistration={handleConfirmRegistration}
             onSelectEvent={(id) => {
@@ -222,6 +260,7 @@ export default function App() {
         {!isAdmin && activeView === 'event_details' && (
           <StitchEventDetails
             eventId={selectedEventId}
+            events={events}
             onBack={() => setActiveView('landing')}
             onRegister={() => {
               if (!currentUser) setIsAuthOpen(true);
@@ -232,6 +271,7 @@ export default function App() {
 
         {!isAdmin && activeView === 'my_pass' && (
           <UserDigitalPassPage
+            events={events}
             registeredEventIds={registeredEventIds}
           />
         )}
@@ -239,6 +279,7 @@ export default function App() {
         {/* Admin Views (sumitdivate3@gmail.com) */}
         {isAdmin && activeView === 'admin_dashboard' && (
           <StitchOrganizerDashboard
+            events={events}
             onLaunchLiveQR={() => setActiveView('admin_scanner')}
             onCreateEvent={() => setIsCreateEventOpen(true)}
           />
@@ -275,7 +316,12 @@ export default function App() {
       {isCreateEventOpen && (
         <StitchCreateEvent
           onClose={() => setIsCreateEventOpen(false)}
-          onCreated={() => setActiveView('admin_dashboard')}
+          onCreated={(createdEvent) => {
+            if (createdEvent) {
+              setEvents(prev => [createdEvent, ...prev.filter(e => e.id !== createdEvent.id)]);
+            }
+            setActiveView(isAdmin ? 'admin_dashboard' : 'landing');
+          }}
         />
       )}
 

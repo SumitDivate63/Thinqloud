@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { SESSIONS, SPEAKERS } from '../../data/conferenceData';
+import { DEFAULT_EVENTS } from '../../data/initialEvents';
 import EventDetailsAndPassModal from './EventDetailsAndPassModal';
 
 export default function StitchLandingPage({
+  events = [],
   registeredEventIds = ['event-1'],
   onConfirmRegistration,
   onSelectEvent,
@@ -16,51 +18,11 @@ export default function StitchLandingPage({
 
   const categories = ['All', 'Academic & Research', 'Enterprise Tech', 'Hackathons & AI', 'Workshops'];
 
-  const sampleEvents = [
-    {
-      id: 'event-1',
-      title: 'ThinqSummit 2026: Global Cloud & AI Architecture',
-      category: 'Enterprise Tech',
-      date: 'Nov 12 - 14, 2026',
-      location: 'Moscone Center, San Francisco & Online',
-      organizer: 'ThinqCloud Engineering',
-      capacity: '8,500 Capacity',
-      registeredCount: 5420,
-      banner: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80',
-      badge: 'Featured Flagship',
-      status: 'Registration Open'
-    },
-    {
-      id: 'event-2',
-      title: 'Autonomous AI Agents & Neural Consensus Symposium',
-      category: 'Hackathons & AI',
-      date: 'Nov 13, 2026',
-      location: 'Stage 2 — AI Hub',
-      organizer: 'DeepMind Robotics Lab',
-      capacity: '1,200 Capacity',
-      registeredCount: 980,
-      banner: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop&q=80',
-      badge: 'Live Stream Active',
-      status: 'Limited Seats'
-    },
-    {
-      id: 'event-3',
-      title: 'Zero-Trust Kernel & eBPF Security Operations Workshop',
-      category: 'Academic & Research',
-      date: 'Nov 14, 2026',
-      location: 'Stage 4 — Security Lab',
-      organizer: 'ShieldCorp Cybersecurity',
-      capacity: '600 Capacity',
-      registeredCount: 450,
-      banner: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=80',
-      badge: 'Hands-on Lab',
-      status: 'Registration Open'
-    }
-  ];
+  const eventsList = events && events.length > 0 ? events : DEFAULT_EVENTS;
 
-  const filteredEvents = sampleEvents.filter(ev => {
+  const filteredEvents = eventsList.filter(ev => {
     const matchCat = selectedCategory === 'All' || ev.category === selectedCategory;
-    const matchSearch = !searchQuery || ev.title.toLowerCase().includes(searchQuery.toLowerCase()) || ev.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchSearch = !searchQuery || (ev.title && ev.title.toLowerCase().includes(searchQuery.toLowerCase())) || (ev.location && ev.location.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchCat && matchSearch;
   });
 
@@ -90,14 +52,14 @@ export default function StitchLandingPage({
             </p>
             <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
               <button
-                onClick={() => setActiveModalEvent(sampleEvents[0])}
+                onClick={() => setActiveModalEvent(eventsList[0])}
                 className="px-6 py-3 rounded-lg bg-secondary text-on-secondary font-semibold text-sm hover:bg-secondary-container transition-all shadow-md flex items-center gap-2"
               >
                 <span className="material-symbols-outlined text-[18px]">badge</span>
                 <span>Register for EventPass</span>
               </button>
               <button
-                onClick={() => setActiveModalEvent(sampleEvents[0])}
+                onClick={() => setActiveModalEvent(eventsList[0])}
                 className="px-6 py-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-semibold text-sm hover:bg-surface-container-low transition-all flex items-center gap-2"
               >
                 <span className="material-symbols-outlined text-[18px]">qr_code_2</span>

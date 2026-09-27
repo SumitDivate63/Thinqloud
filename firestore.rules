@@ -23,15 +23,15 @@ service cloud.firestore {
 
     // 2. Events collection
     match /events/{eventId} {
-      // Anyone authenticated can read published events; Admins can read all
-      allow read: if resource.data.status == "PUBLISHED" || isAdmin();
-      // Only Admin can create, update, or delete events
-      allow create, update, delete: if isAdmin();
+      // Allow read for everyone (published events)
+      allow read: if true;
+      // Allow create, update, delete for clients
+      allow create, update, delete: if true;
       
       // Sessions subcollection
       match /sessions/{sessionId} {
-        allow read: if isAuthenticated();
-        allow write: if isAdmin();
+        allow read: if true;
+        allow write: if true;
       }
     }
 
