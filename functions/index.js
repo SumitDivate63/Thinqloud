@@ -6,7 +6,10 @@ admin.initializeApp();
 const db = admin.firestore();
 
 const ADMIN_EMAIL = 'sumitdivate3@gmail.com';
-const PASS_SECRET = process.env.PASS_SECRET || 'thinqloud_event_secret_key_2026';
+const PASS_SECRET = process.env.PASS_SECRET;
+if (!PASS_SECRET) {
+  console.warn("WARNING: PASS_SECRET environment variable is missing. Set it via firebase functions:config:set pass.secret or process.env.PASS_SECRET.");
+}
 
 /**
  * 1. Auth Trigger & Callable: Assign Role Custom Claim

@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { SESSIONS, SPEAKERS } from '../../data/conferenceData';
+import EventDetailsAndPassModal from './EventDetailsAndPassModal';
 
-export default function StitchLandingPage({ onSelectEvent, onRegisterEvent, onOpenQRScanner }) {
+export default function StitchLandingPage({ onSelectEvent, onRegisterEvent, onOpenQRScanner, currentUser }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Registered Events state for user
+  const [registeredEventIds, setRegisteredEventIds] = useState(['event-1']);
+  const [activeModalEvent, setActiveModalEvent] = useState(null);
 
   const categories = ['All', 'Academic & Research', 'Enterprise Tech', 'Hackathons & AI', 'Workshops'];
 
@@ -55,6 +60,10 @@ export default function StitchLandingPage({ onSelectEvent, onRegisterEvent, onOp
     return matchCat && matchSearch;
   });
 
+  const handleConfirmRegistration = (eventId) => {
+    setRegisteredEventIds(prev => Array.from(new Set([...prev, eventId])));
+  };
+
   return (
     <div className="w-full bg-background min-h-screen pb-16">
       
@@ -75,18 +84,18 @@ export default function StitchLandingPage({ onSelectEvent, onRegisterEvent, onOp
             </p>
             <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
               <button
-                onClick={() => onRegisterEvent('event-1')}
+                onClick={() => setActiveModalEvent(sampleEvents[0])}
                 className="px-6 py-3 rounded-lg bg-secondary text-on-secondary font-semibold text-sm hover:bg-secondary-container transition-all shadow-md flex items-center gap-2"
               >
                 <span className="material-symbols-outlined text-[18px]">badge</span>
                 <span>Register for EventPass</span>
               </button>
               <button
-                onClick={onOpenQRScanner}
+                onClick={() => setActiveModalEvent(sampleEvents[0])}
                 className="px-6 py-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-semibold text-sm hover:bg-surface-container-low transition-all flex items-center gap-2"
               >
-                <span className="material-symbols-outlined text-[18px]">qr_code_scanner</span>
-                <span>Scan Attendance QR</span>
+                <span className="material-symbols-outlined text-[18px]">qr_code_2</span>
+                <span>View Digital Pass & QR</span>
               </button>
             </div>
           </div>
@@ -162,54 +171,93 @@ export default function StitchLandingPage({ onSelectEvent, onRegisterEvent, onOp
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {filteredEvents.map((ev) => (
-              <div
-                key={ev.id}
-                className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:border-secondary/50 transition-all flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="relative h-48 overflow-hidden">
-                    <img src={ev.banner} alt={ev.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                    <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-on-surface/80 backdrop-blur-md text-on-primary text-xs font-semibold">
-                      {ev.badge}
-                    </span>
-                  </div>
+            {filteredEvents.map((ev) => {
+              const isUserRegistered = registeredEventIds.includes(ev.id);
+              return (
+                <div
+                  key={ev.id}
+                  onClick={() => setActiveModalEvent(ev)}
+                  className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:border-secondary/50 transition-all flex flex-col justify-between group cursor-pointer"
+                >
+                  <div>
+                    <div className="relative h-48 overflow-hidden">
+                      <img src={ev.banner} alt={ev.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-on-surface/80 backdrop-blur-md text-on-primary text-xs font-semibold">
+                        {ev.badge}
+                      </span>
+                      {isUserRegistered && (
+                        <span className="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-emerald-600 text-white text-xs font-bold shadow-md flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[14px]">check_circle</span>
+                          <span>Registered</span>
+                        </span>
+                      )}
+                    </div>
 
-                  <div className="p-5 space-y-3">
-                    <span className="text-xs font-bold text-secondary uppercase tracking-wider">{ev.category}</span>
-                    <h3 className="text-base font-bold text-on-surface leading-snug line-clamp-2">{ev.title}</h3>
-                    
-                    <div className="space-y-1.5 text-xs text-on-surface-variant">
-                      <div className="flex items-center gap-1.5">
-                        <span className="material-symbols-outlined text-[16px] text-secondary">calendar_month</span>
-                        <span>{ev.date}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="material-symbols-outlined text-[16px] text-secondary">location_on</span>
-                        <span>{ev.location}</span>
+                    <div className="p-5 space-y-3">
+                      <span className="text-xs font-bold text-secondary uppercase tracking-wider">{ev.category}</span>
+                      <h3 className="text-base font-bold text-on-surface leading-snug line-clamp-2">{ev.title}</h3>
+                      
+                      <div className="space-y-1.5 text-xs text-on-surface-variant">
+                        <div className="flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[16px] text-secondary">calendar_month</span>
+                          <span>{ev.date}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[16px] text-secondary">location_on</span>
+                          <span>{ev.location}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="px-5 pb-5 pt-3 border-t border-outline-variant/40 flex items-center justify-between">
-                  <div className="text-xs text-on-surface-variant">
-                    <strong className="text-on-surface font-semibold">{ev.registeredCount}</strong> / {ev.capacity}
+                  <div className="px-5 pb-5 pt-3 border-t border-outline-variant/40 flex items-center justify-between">
+                    <div className="text-xs text-on-surface-variant">
+                      <strong className="text-on-surface font-semibold">{ev.registeredCount}</strong> / {ev.capacity}
+                    </div>
+
+                    {isUserRegistered ? (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveModalEvent(ev);
+                        }}
+                        className="px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-bold transition-all flex items-center gap-1 shadow-sm"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">qr_code_2</span>
+                        <span>Registered ✓ (View Pass)</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveModalEvent(ev);
+                        }}
+                        className="px-3.5 py-1.5 rounded-lg bg-secondary text-on-secondary hover:bg-secondary-container text-xs font-bold transition-all flex items-center gap-1 shadow-sm"
+                      >
+                        <span>Register</span>
+                        <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                      </button>
+                    )}
                   </div>
-                  <button
-                    onClick={() => onRegisterEvent(ev.id)}
-                    className="px-3.5 py-1.5 rounded-lg bg-surface-container-high text-secondary hover:bg-secondary hover:text-on-secondary text-xs font-bold transition-all flex items-center gap-1"
-                  >
-                    <span>Register</span>
-                    <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
-                  </button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
       </div>
+
+      {/* Pop-up Modal for Details, Schedule, Registration & Digital QR Pass */}
+      {activeModalEvent && (
+        <EventDetailsAndPassModal
+          event={activeModalEvent}
+          isOpen={!!activeModalEvent}
+          onClose={() => setActiveModalEvent(null)}
+          isRegistered={registeredEventIds.includes(activeModalEvent.id)}
+          onConfirmRegistration={handleConfirmRegistration}
+          currentUser={currentUser}
+        />
+      )}
 
     </div>
   );

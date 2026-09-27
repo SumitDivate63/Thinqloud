@@ -4,15 +4,15 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Web app's Firebase configuration
+// Web app's Firebase configuration with Environment Variable support
 const firebaseConfig = {
-  apiKey: "AIzaSyDh5xjyntdR6RzxtJcD-r8_M5P0VQtw2Xo",
-  authDomain: "conferenceplatform-bb134.firebaseapp.com",
-  projectId: "conferenceplatform-bb134",
-  storageBucket: "conferenceplatform-bb134.firebasestorage.app",
-  messagingSenderId: "1093928811908",
-  appId: "1:1093928811908:web:eacf6021e6cc5dc4e331d1",
-  measurementId: "G-G4RTTN0YF5"
+  apiKey: import.meta.env?.VITE_FIREBASE_API_KEY || "AIzaSyDh5xjyntdR6RzxtJcD-r8_M5P0VQtw2Xo",
+  authDomain: import.meta.env?.VITE_FIREBASE_AUTH_DOMAIN || "conferenceplatform-bb134.firebaseapp.com",
+  projectId: import.meta.env?.VITE_FIREBASE_PROJECT_ID || "conferenceplatform-bb134",
+  storageBucket: import.meta.env?.VITE_FIREBASE_STORAGE_BUCKET || "conferenceplatform-bb134.firebasestorage.app",
+  messagingSenderId: import.meta.env?.VITE_FIREBASE_MESSAGING_SENDER_ID || "1093928811908",
+  appId: import.meta.env?.VITE_FIREBASE_APP_ID || "1:1093928811908:web:eacf6021e6cc5dc4e331d1",
+  measurementId: import.meta.env?.VITE_FIREBASE_MEASUREMENT_ID || "G-G4RTTN0YF5"
 };
 
 // Initialize Firebase App
