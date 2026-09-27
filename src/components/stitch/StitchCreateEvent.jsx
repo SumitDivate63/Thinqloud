@@ -21,7 +21,7 @@ export default function StitchCreateEvent({ event, onClose, onCreated }) {
     setSubmitError('');
     try {
       const savedEvent = isEditing
-        ? await updateExistingEvent(event.id, formData)
+        ? await updateExistingEvent(event, formData)
         : await createNewEvent(formData);
       if (onCreated) onCreated(savedEvent);
       onClose();

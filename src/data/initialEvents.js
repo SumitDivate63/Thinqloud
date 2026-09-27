@@ -29,7 +29,8 @@ export async function createNewEvent(formData) {
 }
 
 // Updates fields on an existing event in Firestore.
-export async function updateExistingEvent(eventId, formData) {
+export async function updateExistingEvent(existingEvent, formData) {
+  const eventId = existingEvent.id;
   const updates = {
     title: formData.title || 'Untitled Event',
     category: formData.category || 'Enterprise Tech',
@@ -38,6 +39,9 @@ export async function updateExistingEvent(eventId, formData) {
     capacity: Number(formData.capacity) || 500,
     description: formData.description || '',
     banner: formData.banner || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80',
+    // Older documents (e.g. leftover seed data) may not have this field at
+    // all; make sure editing an event always leaves it as a valid number.
+    registeredCount: Number.isFinite(existingEvent.registeredCount) ? existingEvent.registeredCount : 0,
     updatedAt: new Date().toISOString()
   };
 
