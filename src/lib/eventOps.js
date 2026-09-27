@@ -3,10 +3,8 @@ import {
   doc,
   getDoc,
   setDoc,
-  collection,
-  query,
-  where,
-  getCountFromServer,
+  updateDoc,
+  increment,
   serverTimestamp
 } from 'firebase/firestore';
 
@@ -31,18 +29,6 @@ export function decodePassToken(token) {
   return null;
 }
 
-export async function getEventRegistrationCount(eventId) {
-  const q = query(collection(db, 'registrations'), where('eventId', '==', eventId));
-  const snap = await getCountFromServer(q);
-  return snap.data().count;
-}
-
-export async function getEventAttendanceCount(eventId) {
-  const q = query(collection(db, 'attendance'), where('eventId', '==', eventId));
-  const snap = await getCountFromServer(q);
-  return snap.data().count;
-}
-
 // Registers `user` for `event`. Idempotent: calling it again for an existing
 // registration just returns the same pass instead of erroring.
 //
@@ -53,6 +39,13 @@ export async function getEventAttendanceCount(eventId) {
 // document first (a get() on a not-yet-existing doc under an owner-only read
 // rule is its own separate hazard - see firestore.rules for the exists()
 // docs on the read rule, which is why other checks in this file still need it).
+//
+// Capacity is checked against event.registeredCount (the denormalized
+// counter on the event doc itself, which this function also increments after
+// a successful registration) rather than a live count() query against the
+// registrations collection - aggregation queries can't evaluate rules that
+// depend on document contents, so a plain participant has no way to count
+// other people's registration docs at all (see firestore.rules).
 export async function registerUserForEvent(user, event) {
   if (!user) throw new Error('Sign in required to register.');
 
@@ -62,11 +55,9 @@ export async function registerUserForEvent(user, event) {
   const passToken = buildPassToken({ uid: user.uid, eventId, registrationId });
 
   const capacity = Number(event.capacity);
-  if (Number.isFinite(capacity)) {
-    const currentCount = await getEventRegistrationCount(eventId);
-    if (currentCount >= capacity) {
-      throw new Error('This event has reached full capacity.');
-    }
+  const currentCount = Number(event.registeredCount) || 0;
+  if (Number.isFinite(capacity) && currentCount >= capacity) {
+    throw new Error('This event has reached full capacity.');
   }
 
   const registrationData = {
@@ -85,6 +76,14 @@ export async function registerUserForEvent(user, event) {
       return { alreadyRegistered: true, registrationId, passToken };
     }
     throw err;
+  }
+
+  // Best-effort counter bump for capacity checks/display; the registration
+  // itself already succeeded above regardless of whether this does.
+  try {
+    await updateDoc(doc(db, 'events', eventId), { registeredCount: increment(1) });
+  } catch (err) {
+    console.warn('Could not update event registeredCount:', err);
   }
 
   return { alreadyRegistered: false, registrationId, passToken };

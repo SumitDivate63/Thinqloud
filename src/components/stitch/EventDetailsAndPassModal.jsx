@@ -5,8 +5,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import {
   buildPassToken,
   registerUserForEvent,
-  submitEventFeedback,
-  getEventRegistrationCount
+  submitEventFeedback
 } from '../../lib/eventOps';
 
 export default function EventDetailsAndPassModal({ event, isOpen, onClose, isRegistered, currentUser, onRequireAuth }) {
@@ -22,19 +21,8 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
   const [registerError, setRegisterError] = useState('');
 
   const [attendanceRecord, setAttendanceRecord] = useState(null);
-  const [liveRegisteredCount, setLiveRegisteredCount] = useState(null);
 
   const registered = isRegistered || justRegistered;
-
-  // Live registration count for the capacity display (replaces the hardcoded fallback number)
-  useEffect(() => {
-    if (!event) return;
-    let cancelled = false;
-    getEventRegistrationCount(event.id).then((count) => {
-      if (!cancelled) setLiveRegisteredCount(count);
-    }).catch(() => {});
-    return () => { cancelled = true; };
-  }, [event, registered]);
 
   // Live attendance status once registered, so feedback unlocks the moment the admin scans this attendee in
   useEffect(() => {
@@ -189,7 +177,7 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
                     <div>
                       <div className="text-xs font-bold text-on-surface">Registration Open</div>
                       <div className="text-[11px] text-on-surface-variant">
-                        {liveRegisteredCount ?? event.registeredCount ?? 0} / {event.capacity} registered
+                        {event.registeredCount ?? 0} / {event.capacity} registered
                       </div>
                     </div>
                     <button

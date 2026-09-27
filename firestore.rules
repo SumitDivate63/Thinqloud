@@ -31,8 +31,19 @@ service cloud.firestore {
     match /events/{eventId} {
       // Allow read for everyone (published events)
       allow read: if true;
-      // Only the admin may create, edit or remove events
-      allow create, update, delete: if isAdmin();
+      allow create, delete: if isAdmin();
+      // The admin may edit anything. A registering participant may ALSO bump
+      // registeredCount by exactly 1 and nothing else - this denormalized
+      // counter is how capacity is checked (see src/lib/eventOps.js): count()
+      // aggregation queries can't be used here because they can't evaluate
+      // security rules that depend on document contents (like the owner
+      // check on /registrations below), so a live COUNT of registrations is
+      // not something a plain participant can read at all.
+      allow update: if isAdmin() || (
+        isAuthenticated() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['registeredCount']) &&
+        request.resource.data.registeredCount == resource.data.registeredCount + 1
+      );
 
       // Sessions subcollection
       match /sessions/{sessionId} {

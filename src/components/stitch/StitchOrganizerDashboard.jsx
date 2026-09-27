@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase';
-import { collection, query, orderBy, limit, onSnapshot, getCountFromServer } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, getDocs } from 'firebase/firestore';
 
 export default function StitchOrganizerDashboard({ events = [], onLaunchLiveQR, onCreateEvent, onEditEvent }) {
   const [totals, setTotals] = useState({ registrations: 0, attendance: 0, feedbackCount: 0, avgRating: null });
@@ -10,17 +10,21 @@ export default function StitchOrganizerDashboard({ events = [], onLaunchLiveQR, 
     let cancelled = false;
     async function loadTotals() {
       try {
+        // Plain getDocs() (not count() aggregation) - aggregation queries
+        // can't evaluate rules that depend on document contents, which the
+        // owner-check on these collections does. A regular query is
+        // evaluated per-document instead, so it works fine for the admin.
         const [regSnap, attSnap, fbSnap] = await Promise.all([
-          getCountFromServer(collection(db, 'registrations')),
-          getCountFromServer(collection(db, 'attendance')),
-          getCountFromServer(collection(db, 'feedback'))
+          getDocs(collection(db, 'registrations')),
+          getDocs(collection(db, 'attendance')),
+          getDocs(collection(db, 'feedback'))
         ]);
         if (cancelled) return;
         setTotals(prev => ({
           ...prev,
-          registrations: regSnap.data().count,
-          attendance: attSnap.data().count,
-          feedbackCount: fbSnap.data().count
+          registrations: regSnap.size,
+          attendance: attSnap.size,
+          feedbackCount: fbSnap.size
         }));
       } catch (err) {
         console.warn('Dashboard totals unavailable:', err);
