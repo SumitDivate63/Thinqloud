@@ -1,40 +1,106 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { SESSIONS, SPEAKERS } from '../../data/conferenceData';
+import { db } from '../../firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
+import {
+  buildPassToken,
+  registerUserForEvent,
+  submitEventFeedback,
+  getEventRegistrationCount
+} from '../../lib/eventOps';
 
-export default function EventDetailsAndPassModal({ event, isOpen, onClose, isRegistered, onConfirmRegistration, currentUser }) {
+export default function EventDetailsAndPassModal({ event, isOpen, onClose, isRegistered, currentUser, onRequireAuth }) {
   const [activeTab, setActiveTab] = useState(isRegistered ? 'pass' : 'details'); // 'details' | 'pass' | 'feedback'
   const [feedbackRating, setFeedbackRating] = useState(5);
   const [feedbackComment, setFeedbackComment] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+  const [feedbackError, setFeedbackError] = useState('');
+
   const [justRegistered, setJustRegistered] = useState(false);
+  const [registering, setRegistering] = useState(false);
+  const [registerError, setRegisterError] = useState('');
+
+  const [attendanceRecord, setAttendanceRecord] = useState(null);
+  const [liveRegisteredCount, setLiveRegisteredCount] = useState(null);
+
+  const registered = isRegistered || justRegistered;
+
+  // Live registration count for the capacity display (replaces the hardcoded fallback number)
+  useEffect(() => {
+    if (!event) return;
+    let cancelled = false;
+    getEventRegistrationCount(event.id).then((count) => {
+      if (!cancelled) setLiveRegisteredCount(count);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [event, registered]);
+
+  // Live attendance status once registered, so feedback unlocks the moment the admin scans this attendee in
+  useEffect(() => {
+    if (!currentUser || !event || !registered) {
+      setAttendanceRecord(null);
+      return;
+    }
+    const attRef = doc(db, 'attendance', `${currentUser.uid}_${event.id}`);
+    const unsub = onSnapshot(attRef, (snap) => {
+      setAttendanceRecord(snap.exists() ? snap.data() : null);
+    }, () => setAttendanceRecord(null));
+    return () => unsub();
+  }, [currentUser, event, registered]);
+
+  const passToken = useMemo(() => {
+    if (!currentUser || !event) return null;
+    const registrationId = `${currentUser.uid}_${event.id}`;
+    return buildPassToken({ uid: currentUser.uid, eventId: event.id, registrationId });
+  }, [currentUser, event]);
 
   if (!isOpen || !event) return null;
 
-  const handleRegisterClick = () => {
-    onConfirmRegistration(event.id);
-    setJustRegistered(true);
-    setActiveTab('pass');
+  const handleRegisterClick = async () => {
+    if (!currentUser) {
+      onRequireAuth?.();
+      return;
+    }
+    setRegistering(true);
+    setRegisterError('');
+    try {
+      await registerUserForEvent(currentUser, event);
+      setJustRegistered(true);
+      setActiveTab('pass');
+    } catch (err) {
+      setRegisterError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setRegistering(false);
+    }
   };
 
-  const handleSubmitFeedback = (e) => {
+  const handleSubmitFeedback = async (e) => {
     e.preventDefault();
-    setFeedbackSubmitted(true);
+    if (!currentUser) {
+      onRequireAuth?.();
+      return;
+    }
+    setFeedbackSubmitting(true);
+    setFeedbackError('');
+    try {
+      await submitEventFeedback({ uid: currentUser.uid, eventId: event.id, rating: feedbackRating, comment: feedbackComment });
+      setFeedbackSubmitted(true);
+    } catch (err) {
+      setFeedbackError(err.message || 'Could not submit feedback. Please try again.');
+    } finally {
+      setFeedbackSubmitting(false);
+    }
   };
 
-  // Sample signed pass token encoding { registrationId, uid, eventId }
-  const samplePassToken = btoa(JSON.stringify({
-    registrationId: `${currentUser?.uid || 'usr-guest'}_${event.id}`,
-    uid: currentUser?.uid || 'usr-guest',
-    eventId: event.id,
-    ts: Date.now()
-  }));
-
-  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(samplePassToken)}`;
+  const qrImageUrl = passToken
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(passToken)}`
+    : null;
 
   return (
     <div className="fixed inset-0 z-50 bg-on-surface/60 backdrop-blur-md flex items-center justify-center p-4">
       <div className="w-full max-w-4xl bg-surface-container-lowest border border-outline-variant/60 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        
+
         {/* Top Header Banner */}
         <div className="relative h-44 md:h-52 overflow-hidden flex-shrink-0">
           <img src={event.banner} alt={event.title} className="w-full h-full object-cover" />
@@ -63,7 +129,7 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
             }`}
           >
             <span className="material-symbols-outlined text-[16px]">info</span>
-            <span>Event Details & Schedule</span>
+            <span>Details</span>
           </button>
 
           <button
@@ -75,8 +141,8 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
             }`}
           >
             <span className="material-symbols-outlined text-[16px]">qr_code_2</span>
-            <span>Digital Pass & QR</span>
-            {(isRegistered || justRegistered) && (
+            <span>Digital Pass</span>
+            {registered && (
               <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
                 Active
               </span>
@@ -98,52 +164,60 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
 
         {/* Tab Content Body */}
         <div className="p-6 overflow-y-auto flex-1 space-y-6">
-          
+
           {/* TAB 1: EVENT DETAILS & SCHEDULE */}
           {activeTab === 'details' && (
             <div className="space-y-6">
-              
+
               {/* Registration Banner status */}
-              {(isRegistered || justRegistered) ? (
+              {registered ? (
                 <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-emerald-600 text-[20px]">check_circle</span>
-                    <span>You are registered for this event! Digital Pass is generated.</span>
+                    <span>You're registered. Your pass is ready.</span>
                   </div>
                   <button
                     onClick={() => setActiveTab('pass')}
                     className="px-3 py-1 rounded-lg bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700"
                   >
-                    View QR Pass
+                    View Pass
                   </button>
                 </div>
               ) : (
-                <div className="p-4 rounded-xl bg-surface-container-low border border-outline-variant/60 flex items-center justify-between">
-                  <div>
-                    <div className="text-xs font-bold text-on-surface">Registration Status: OPEN</div>
-                    <div className="text-[11px] text-on-surface-variant">{event.registeredCount || 5420} / {event.capacity} Capacity Filled</div>
+                <div className="p-4 rounded-xl bg-surface-container-low border border-outline-variant/60 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-on-surface">Registration Open</div>
+                      <div className="text-[11px] text-on-surface-variant">
+                        {liveRegisteredCount ?? event.registeredCount ?? 0} / {event.capacity} registered
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleRegisterClick}
+                      disabled={registering}
+                      className="px-5 py-2.5 rounded-xl bg-secondary text-on-secondary font-bold text-xs hover:bg-secondary-container transition-all shadow-md flex items-center gap-2 disabled:opacity-60"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">badge</span>
+                      <span>{registering ? 'Registering…' : currentUser ? 'Register' : 'Sign In to Register'}</span>
+                    </button>
                   </div>
-                  <button
-                    onClick={handleRegisterClick}
-                    className="px-5 py-2.5 rounded-xl bg-secondary text-on-secondary font-bold text-xs hover:bg-secondary-container transition-all shadow-md flex items-center gap-2"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">badge</span>
-                    <span>Confirm Registration & Claim Pass</span>
-                  </button>
+                  {registerError && (
+                    <p className="text-[11px] text-rose-600 font-semibold">{registerError}</p>
+                  )}
                 </div>
               )}
 
               {/* Event Description */}
               <div className="space-y-2">
-                <h3 className="text-sm font-bold text-on-surface">About this Conference</h3>
+                <h3 className="text-sm font-bold text-on-surface">About</h3>
                 <p className="text-xs text-on-surface-variant leading-relaxed">
-                  Join cloud architects, AI researchers, and engineering leaders for deep-dive sessions, zero-trust security strategy, and dynamic QR attendance verification.
+                  {event.description || 'Join us for sessions, speakers, and networking.'}
                 </p>
               </div>
 
               {/* Keynote Speakers */}
               <div className="space-y-3 pt-3 border-t border-outline-variant/40">
-                <h3 className="text-sm font-bold text-on-surface">Featured Keynote Speakers</h3>
+                <h3 className="text-sm font-bold text-on-surface">Featured Speakers</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {SPEAKERS.slice(0, 4).map(spk => (
                     <div key={spk.id} className="p-3 rounded-xl bg-surface-container-low border border-outline-variant/40 flex items-center gap-3">
@@ -160,7 +234,7 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
 
               {/* Detailed Session Schedule */}
               <div className="space-y-3 pt-3 border-t border-outline-variant/40">
-                <h3 className="text-sm font-bold text-on-surface">Event Schedule & Sessions</h3>
+                <h3 className="text-sm font-bold text-on-surface">Schedule</h3>
                 <div className="space-y-2.5">
                   {SESSIONS.map(sess => (
                     <div key={sess.id} className="p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/40 flex flex-col md:flex-row md:items-center justify-between gap-2">
@@ -183,32 +257,33 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
           {/* TAB 2: DIGITAL PASS & QR */}
           {activeTab === 'pass' && (
             <div className="space-y-6 text-center">
-              {!(isRegistered || justRegistered) ? (
+              {!registered ? (
                 <div className="p-8 rounded-2xl bg-surface-container-low border border-dashed border-outline-variant/60 space-y-3">
                   <span className="material-symbols-outlined text-4xl text-on-surface-variant">lock</span>
-                  <h3 className="text-base font-bold text-on-surface">Digital Pass Not Claimed Yet</h3>
+                  <h3 className="text-base font-bold text-on-surface">No Pass Yet</h3>
                   <p className="text-xs text-on-surface-variant max-w-sm mx-auto">
-                    Please click "Confirm Registration" on the Details tab to generate your unique signed QR pass token for venue entry.
+                    Register on the Details tab to get your QR pass for venue entry.
                   </p>
                   <button
                     onClick={handleRegisterClick}
-                    className="px-5 py-2.5 rounded-xl bg-secondary text-on-secondary font-bold text-xs hover:bg-secondary-container transition-all"
+                    disabled={registering}
+                    className="px-5 py-2.5 rounded-xl bg-secondary text-on-secondary font-bold text-xs hover:bg-secondary-container transition-all disabled:opacity-60"
                   >
-                    Confirm Registration Now
+                    {registering ? 'Registering…' : currentUser ? 'Register Now' : 'Sign In to Register'}
                   </button>
                 </div>
               ) : (
                 <div className="max-w-md mx-auto bg-gradient-to-br from-primary-container to-secondary-container text-white p-6 rounded-2xl shadow-xl space-y-5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-extrabold tracking-wider">EVENTPASS DIGITAL QR</span>
+                    <span className="font-extrabold tracking-wider">DIGITAL PASS</span>
                     <span className="px-2.5 py-0.5 rounded bg-emerald-500/30 text-emerald-300 font-bold uppercase text-[10px]">
-                      CONFIRMED PASS
+                      CONFIRMED
                     </span>
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-extrabold">{currentUser?.displayName || currentUser?.email || 'Authenticated Attendee'}</h3>
-                    <p className="text-xs text-white/80">{currentUser?.email || 'user@thinqsummit.io'}</p>
+                    <h3 className="text-lg font-extrabold">{currentUser?.displayName || currentUser?.email}</h3>
+                    <p className="text-xs text-white/80">{currentUser?.email}</p>
                   </div>
 
                   {/* Rendered QR Image & Full Pass Token ID */}
@@ -216,24 +291,26 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
                     <img src={qrImageUrl} alt="Digital QR Pass" className="w-48 h-48 mx-auto block rounded-lg" />
                     <div className="mt-3 p-2 rounded-xl bg-slate-100 border border-slate-200">
                       <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center justify-between">
-                        <span>Pass Token ID</span>
+                        <span>Pass Token</span>
                         <button
                           type="button"
-                          onClick={() => navigator.clipboard?.writeText(samplePassToken)}
+                          onClick={() => navigator.clipboard?.writeText(passToken)}
                           className="text-[10px] font-extrabold text-secondary hover:underline uppercase"
                         >
                           Copy
                         </button>
                       </div>
                       <div className="text-[11px] font-mono font-bold text-slate-800 break-all select-all leading-tight max-h-16 overflow-y-auto">
-                        {samplePassToken}
+                        {passToken}
                       </div>
                     </div>
                   </div>
 
                   <div className="p-3 rounded-xl bg-white/10 text-xs font-semibold flex items-center justify-center gap-2">
-                    <span className="material-symbols-outlined text-[18px]">schedule</span>
-                    <span>Check-in Status: Not yet scanned by Admin</span>
+                    <span className="material-symbols-outlined text-[18px]">
+                      {attendanceRecord ? 'check_circle' : 'schedule'}
+                    </span>
+                    <span>{attendanceRecord ? 'Checked in' : 'Not yet scanned by admin'}</span>
                   </div>
                 </div>
               )}
@@ -243,12 +320,20 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
           {/* TAB 3: POST-ATTENDANCE FEEDBACK */}
           {activeTab === 'feedback' && (
             <div className="space-y-4 max-w-lg mx-auto">
-              <h3 className="text-sm font-bold text-on-surface">Submit Event Feedback</h3>
-              
-              {feedbackSubmitted ? (
+              <h3 className="text-sm font-bold text-on-surface">Feedback</h3>
+
+              {!registered ? (
+                <div className="p-4 rounded-xl bg-surface-container-low text-xs text-on-surface-variant leading-relaxed">
+                  Register and attend the event to unlock feedback.
+                </div>
+              ) : !attendanceRecord ? (
+                <div className="p-4 rounded-xl bg-surface-container-low text-xs text-on-surface-variant leading-relaxed">
+                  Feedback unlocks after the admin scans your pass at the event.
+                </div>
+              ) : feedbackSubmitted ? (
                 <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
                   <span className="material-symbols-outlined text-[20px]">check_circle</span>
-                  <span>Thank you! Your feedback rating ({feedbackRating}/5 stars) has been recorded.</span>
+                  <span>Thanks! Your feedback ({feedbackRating}/5) has been recorded.</span>
                 </div>
               ) : (
                 <form onSubmit={handleSubmitFeedback} className="space-y-4">
@@ -268,21 +353,26 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-on-surface-variant block mb-1">Comments & Insights</label>
+                    <label className="text-xs font-semibold text-on-surface-variant block mb-1">Comments</label>
                     <textarea
                       rows={3}
-                      placeholder="Share your thoughts on sessions, topics, or venue..."
+                      placeholder="Share your thoughts..."
                       value={feedbackComment}
                       onChange={(e) => setFeedbackComment(e.target.value)}
                       className="w-full py-2 px-3 bg-surface-container-low border border-outline-variant/60 rounded-xl text-xs text-on-surface"
                     />
                   </div>
 
+                  {feedbackError && (
+                    <p className="text-[11px] text-rose-600 font-semibold">{feedbackError}</p>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full py-2.5 rounded-xl bg-secondary text-on-secondary font-bold text-xs hover:bg-secondary-container transition-all"
+                    disabled={feedbackSubmitting}
+                    className="w-full py-2.5 rounded-xl bg-secondary text-on-secondary font-bold text-xs hover:bg-secondary-container transition-all disabled:opacity-60"
                   >
-                    Submit Feedback
+                    {feedbackSubmitting ? 'Submitting…' : 'Submit Feedback'}
                   </button>
                 </form>
               )}

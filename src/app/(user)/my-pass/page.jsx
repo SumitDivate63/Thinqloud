@@ -5,14 +5,17 @@ import { auth, db } from '../../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { DEFAULT_EVENTS } from '../../../data/initialEvents';
+import { buildPassToken, submitEventFeedback } from '../../../lib/eventOps';
 
-export default function UserDigitalPassPage({ registeredEventIds = ['event-1'], events = [] }) {
+export default function UserDigitalPassPage({ registeredEventIds = [], events = [] }) {
   const [currentUser, setCurrentUser] = useState(null);
-  const [selectedEventId, setSelectedEventId] = useState(registeredEventIds[0] || 'event-1');
+  const [selectedEventId, setSelectedEventId] = useState(registeredEventIds[0] || null);
   const [attendanceStatus, setAttendanceStatus] = useState(null);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [feedbackRating, setFeedbackRating] = useState(5);
   const [feedbackComment, setFeedbackComment] = useState('');
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+  const [feedbackError, setFeedbackError] = useState('');
 
   const eventsList = events && events.length > 0 ? events : DEFAULT_EVENTS;
   const eventsMap = eventsList.reduce((acc, ev) => {
@@ -24,39 +27,78 @@ export default function UserDigitalPassPage({ registeredEventIds = ['event-1'], 
   useEffect(() => {
     if (registeredEventIds.length > 0 && !registeredEventIds.includes(selectedEventId)) {
       setSelectedEventId(registeredEventIds[0]);
+    } else if (registeredEventIds.length === 0) {
+      setSelectedEventId(null);
     }
   }, [registeredEventIds]);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setCurrentUser(u);
-      if (u) {
-        const attRef = doc(db, 'attendance', `${u.uid}_${selectedEventId}`);
-        const unsubAtt = onSnapshot(attRef, (snap) => {
-          if (snap.exists()) {
-            setAttendanceStatus(snap.data());
-          } else {
-            setAttendanceStatus(null);
-          }
-        });
-        return () => unsubAtt();
-      }
-    });
+    const unsub = onAuthStateChanged(auth, setCurrentUser);
     return () => unsub();
-  }, [selectedEventId]);
+  }, []);
 
-  const currentEvent = eventsMap[selectedEventId] || eventsList[0];
+  useEffect(() => {
+    setFeedbackSubmitted(false);
+    setFeedbackError('');
+    if (!currentUser || !selectedEventId) {
+      setAttendanceStatus(null);
+      return;
+    }
+    const attRef = doc(db, 'attendance', `${currentUser.uid}_${selectedEventId}`);
+    const unsubAtt = onSnapshot(attRef, (snap) => {
+      setAttendanceStatus(snap.exists() ? snap.data() : null);
+    }, () => setAttendanceStatus(null));
+    return () => unsubAtt();
+  }, [currentUser, selectedEventId]);
 
-  const samplePassToken = currentUser 
-    ? btoa(JSON.stringify({ registrationId: `${currentUser.uid}_${currentEvent.id}`, uid: currentUser.uid, eventId: currentEvent.id, ts: Date.now() }))
-    : 'GUEST_PASS_TOKEN';
+  const currentEvent = eventsMap[selectedEventId];
 
-  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(samplePassToken)}`;
+  const passToken = (currentUser && currentEvent)
+    ? buildPassToken({ uid: currentUser.uid, eventId: currentEvent.id, registrationId: `${currentUser.uid}_${currentEvent.id}` })
+    : null;
 
-  const handleSubmitFeedback = (e) => {
+  const qrImageUrl = passToken
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(passToken)}`
+    : null;
+
+  const handleSubmitFeedback = async (e) => {
     e.preventDefault();
-    setFeedbackSubmitted(true);
+    if (!currentUser || !currentEvent) return;
+    setFeedbackSubmitting(true);
+    setFeedbackError('');
+    try {
+      await submitEventFeedback({ uid: currentUser.uid, eventId: currentEvent.id, rating: feedbackRating, comment: feedbackComment });
+      setFeedbackSubmitted(true);
+    } catch (err) {
+      setFeedbackError(err.message || 'Could not submit feedback. Please try again.');
+    } finally {
+      setFeedbackSubmitting(false);
+    }
   };
+
+  if (!currentUser) {
+    return (
+      <div className="w-full bg-background min-h-screen p-4 md:p-8 flex items-center justify-center">
+        <div className="max-w-sm text-center bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-8 shadow-sm space-y-2">
+          <span className="material-symbols-outlined text-4xl text-on-surface-variant">lock</span>
+          <h2 className="text-base font-bold text-on-surface">Sign in to view your pass</h2>
+          <p className="text-xs text-on-surface-variant">Your digital event passes appear here once you're signed in and registered.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentEvent) {
+    return (
+      <div className="w-full bg-background min-h-screen p-4 md:p-8 flex items-center justify-center">
+        <div className="max-w-sm text-center bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-8 shadow-sm space-y-2">
+          <span className="material-symbols-outlined text-4xl text-on-surface-variant">badge</span>
+          <h2 className="text-base font-bold text-on-surface">No passes yet</h2>
+          <p className="text-xs text-on-surface-variant">Register for an event from Browse Events to get your digital pass.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-background min-h-screen p-4 md:p-8 space-y-6 max-w-5xl mx-auto">
@@ -107,8 +149,8 @@ export default function UserDigitalPassPage({ registeredEventIds = ['event-1'], 
           </div>
 
           <div className="space-y-1">
-            <h2 className="text-xl font-extrabold text-white">{currentUser?.displayName || currentUser?.email || 'Authenticated Attendee'}</h2>
-            <p className="text-xs text-white/80">{currentUser?.email || 'user@thinqsummit.io'}</p>
+            <h2 className="text-xl font-extrabold text-white">{currentUser.displayName || currentUser.email}</h2>
+            <p className="text-xs text-white/80">{currentUser.email}</p>
           </div>
 
           {/* Rendered QR Code & Full Token ID */}
@@ -119,14 +161,14 @@ export default function UserDigitalPassPage({ registeredEventIds = ['event-1'], 
                 <span>Pass Token ID</span>
                 <button
                   type="button"
-                  onClick={() => navigator.clipboard?.writeText(samplePassToken)}
+                  onClick={() => navigator.clipboard?.writeText(passToken)}
                   className="text-[10px] font-extrabold text-secondary hover:text-secondary-container transition-colors uppercase"
                 >
                   Copy Token
                 </button>
               </div>
               <div className="text-[11px] font-mono font-bold text-slate-800 break-all select-all leading-tight max-h-20 overflow-y-auto">
-                {samplePassToken}
+                {passToken}
               </div>
             </div>
           </div>
@@ -206,11 +248,16 @@ export default function UserDigitalPassPage({ registeredEventIds = ['event-1'], 
                   />
                 </div>
 
+                {feedbackError && (
+                  <p className="text-[11px] text-rose-600 font-semibold">{feedbackError}</p>
+                )}
+
                 <button
                   type="submit"
-                  className="px-4 py-2.5 rounded-xl bg-secondary text-on-secondary font-bold text-xs hover:bg-secondary-container transition-all"
+                  disabled={feedbackSubmitting}
+                  className="px-4 py-2.5 rounded-xl bg-secondary text-on-secondary font-bold text-xs hover:bg-secondary-container transition-all disabled:opacity-60"
                 >
-                  Submit Event Feedback
+                  {feedbackSubmitting ? 'Submitting…' : 'Submit Event Feedback'}
                 </button>
               </form>
             )}

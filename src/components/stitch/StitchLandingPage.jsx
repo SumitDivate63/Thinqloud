@@ -5,11 +5,8 @@ import EventDetailsAndPassModal from './EventDetailsAndPassModal';
 
 export default function StitchLandingPage({
   events = [],
-  registeredEventIds = ['event-1'],
-  onConfirmRegistration,
-  onSelectEvent,
-  onRegisterEvent,
-  onOpenQRScanner,
+  registeredEventIds = [],
+  onRequireAuth,
   currentUser
 }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -25,12 +22,6 @@ export default function StitchLandingPage({
     const matchSearch = !searchQuery || (ev.title && ev.title.toLowerCase().includes(searchQuery.toLowerCase())) || (ev.location && ev.location.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchCat && matchSearch;
   });
-
-  const handleConfirmRegistration = (eventId) => {
-    if (onConfirmRegistration) {
-      onConfirmRegistration(eventId);
-    }
-  };
 
   return (
     <div className="w-full bg-background min-h-screen pb-16">
@@ -222,8 +213,8 @@ export default function StitchLandingPage({
           isOpen={!!activeModalEvent}
           onClose={() => setActiveModalEvent(null)}
           isRegistered={registeredEventIds.includes(activeModalEvent.id)}
-          onConfirmRegistration={handleConfirmRegistration}
           currentUser={currentUser}
+          onRequireAuth={onRequireAuth}
         />
       )}
 

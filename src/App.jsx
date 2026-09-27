@@ -10,7 +10,7 @@ import StitchCreateEvent from './components/stitch/StitchCreateEvent';
 import StitchAdminOperations from './components/stitch/StitchAdminOperations';
 
 import { auth, db } from './firebase';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { resolveUserRole, HARDCODED_ADMIN_EMAIL, logoutUser } from './lib/roleAuth';
 import { DEFAULT_EVENTS, getLocalEvents, saveLocalEvents } from './data/initialEvents';
@@ -63,25 +63,23 @@ export default function App() {
   const [activeView, setActiveView] = useState('landing');
   const [selectedEventId, setSelectedEventId] = useState('event-1');
 
-  // Persistent User Registrations State (LIFTS REGISTRATION STATE AT TOP LEVEL)
-  const [registeredEventIds, setRegisteredEventIds] = useState(() => {
-    try {
-      const saved = localStorage.getItem('eventhub_registered_ids');
-      return saved ? JSON.parse(saved) : ['event-1'];
-    } catch (e) {
-      return ['event-1'];
-    }
-  });
+  // Registered event IDs for the signed-in user, sourced live from Firestore
+  // (per-uid, so two accounts on the same browser never see each other's passes).
+  const [registeredEventIds, setRegisteredEventIds] = useState([]);
 
-  const handleConfirmRegistration = (eventId) => {
-    setRegisteredEventIds(prev => {
-      const updated = Array.from(new Set([...prev, eventId]));
-      try {
-        localStorage.setItem('eventhub_registered_ids', JSON.stringify(updated));
-      } catch (e) {}
-      return updated;
+  useEffect(() => {
+    if (!currentUser) {
+      setRegisteredEventIds([]);
+      return;
+    }
+    const q = query(collection(db, 'registrations'), where('uid', '==', currentUser.uid));
+    const unsub = onSnapshot(q, (snapshot) => {
+      setRegisteredEventIds(snapshot.docs.map(d => d.data().eventId));
+    }, (err) => {
+      console.warn('Registrations listener error:', err);
     });
-  };
+    return () => unsub();
+  }, [currentUser]);
 
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -243,16 +241,7 @@ export default function App() {
           <StitchLandingPage
             events={events}
             registeredEventIds={registeredEventIds}
-            onConfirmRegistration={handleConfirmRegistration}
-            onSelectEvent={(id) => {
-              setSelectedEventId(id);
-              setActiveView('event_details');
-            }}
-            onRegisterEvent={(id) => {
-              if (!currentUser) setIsAuthOpen(true);
-              else setActiveView('my_pass');
-            }}
-            onOpenQRScanner={() => setActiveView('my_pass')}
+            onRequireAuth={() => setIsAuthOpen(true)}
             currentUser={currentUser}
           />
         )}

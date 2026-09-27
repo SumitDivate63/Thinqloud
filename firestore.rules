@@ -8,7 +8,13 @@ service cloud.firestore {
     }
     
     function isAdmin() {
-      return isAuthenticated() && request.auth.token.role == "admin";
+      // Custom claim is the primary check; email fallback matches the app's
+      // single-hardcoded-admin model used client-side (see src/lib/roleAuth.js)
+      // since the claim-setting Cloud Function is not deployed for this project.
+      return isAuthenticated() && (
+        request.auth.token.role == "admin" ||
+        request.auth.token.email.lower() == "sumitdivate3@gmail.com"
+      );
     }
 
     function isOwner(uid) {
@@ -25,13 +31,13 @@ service cloud.firestore {
     match /events/{eventId} {
       // Allow read for everyone (published events)
       allow read: if true;
-      // Allow create, update, delete for clients
-      allow create, update, delete: if true;
-      
+      // Only the admin may create, edit or remove events
+      allow create, update, delete: if isAdmin();
+
       // Sessions subcollection
       match /sessions/{sessionId} {
         allow read: if true;
-        allow write: if true;
+        allow write: if isAdmin();
       }
     }
 
@@ -42,7 +48,7 @@ service cloud.firestore {
       allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
       // Create allowed only for authenticated user registering for themselves
       allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
-      // Direct updates and deletes DENIED to all clients (admin overrides must go via Cloud Function)
+      // Registrations are immutable once created (no client update/delete path)
       allow update, delete: if false;
     }
 
@@ -51,8 +57,8 @@ service cloud.firestore {
     match /attendance/{attendanceId} {
       // Read allowed for owner participant or admin
       allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
-      // Direct client writes DENIED to ALL clients (must go through markAttendance Cloud Function using Admin SDK)
-      allow create, update, delete: if false;
+      // Only the admin's authenticated client may record/override attendance
+      allow create, update, delete: if isAdmin();
     }
 
     // 5. Feedback collection
