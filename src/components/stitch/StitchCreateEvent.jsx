@@ -11,7 +11,8 @@ export default function StitchCreateEvent({ onClose, onCreated }) {
     date: '',
     location: '',
     capacity: 500,
-    description: ''
+    description: '',
+    banner: ''
   });
 
   const handleSubmit = async (e) => {
@@ -128,6 +129,27 @@ export default function StitchCreateEvent({ onClose, onCreated }) {
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full py-2 px-3 bg-surface-container-low border border-outline-variant/60 rounded-lg text-sm text-on-surface"
             />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-on-surface-variant block mb-1">Banner Photo URL (optional)</label>
+            <input
+              type="url"
+              placeholder="https://images.unsplash.com/photo-..."
+              value={formData.banner}
+              onChange={(e) => setFormData({ ...formData, banner: e.target.value })}
+              className="w-full py-2 px-3 bg-surface-container-low border border-outline-variant/60 rounded-lg text-sm text-on-surface"
+            />
+            {formData.banner && (
+              <img
+                src={formData.banner}
+                alt="Banner preview"
+                className="mt-2 h-28 w-full object-cover rounded-lg border border-outline-variant/60"
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                onLoad={(e) => { e.currentTarget.style.display = 'block'; }}
+              />
+            )}
+            <p className="text-[11px] text-on-surface-variant mt-1">Leave blank to use the default photo.</p>
           </div>
 
           {submitError && (
