@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { createNewEvent } from '../../data/initialEvents';
+import { createNewEvent, updateExistingEvent } from '../../data/initialEvents';
 
-export default function StitchCreateEvent({ onClose, onCreated }) {
-  const [step, setStep] = useState(1);
+export default function StitchCreateEvent({ event, onClose, onCreated }) {
+  const isEditing = !!event;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [formData, setFormData] = useState({
-    title: '',
-    category: 'Enterprise Tech',
-    date: '',
-    location: '',
-    capacity: 500,
-    description: '',
-    banner: ''
+    title: event?.title || '',
+    category: event?.category || 'Enterprise Tech',
+    date: event?.date || '',
+    location: event?.location || '',
+    capacity: event?.capacity || 500,
+    description: event?.description || '',
+    banner: event?.banner || ''
   });
 
   const handleSubmit = async (e) => {
@@ -20,11 +20,13 @@ export default function StitchCreateEvent({ onClose, onCreated }) {
     setIsSubmitting(true);
     setSubmitError('');
     try {
-      const createdEvent = await createNewEvent(formData);
-      if (onCreated) onCreated(createdEvent);
+      const savedEvent = isEditing
+        ? await updateExistingEvent(event.id, formData)
+        : await createNewEvent(formData);
+      if (onCreated) onCreated(savedEvent);
       onClose();
     } catch (err) {
-      console.error('Failed to create event:', err);
+      console.error('Failed to save event:', err);
       setSubmitError(err.message || 'Could not save this event. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -34,16 +36,16 @@ export default function StitchCreateEvent({ onClose, onCreated }) {
   return (
     <div className="fixed inset-0 z-50 bg-on-surface/60 backdrop-blur-md flex items-center justify-center p-4">
       <div className="w-full max-w-2xl bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-6 md:p-8 shadow-2xl space-y-6 relative overflow-hidden">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between border-b border-outline-variant/40 pb-4">
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-lg bg-secondary text-on-secondary flex items-center justify-center">
-              <span className="material-symbols-outlined text-[20px]">add_circle</span>
+              <span className="material-symbols-outlined text-[20px]">{isEditing ? 'edit' : 'add_circle'}</span>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-on-surface">Create New Event</h2>
-              <p className="text-xs text-on-surface-variant">Step {step} of 2 • Basic Information & Sessions</p>
+              <h2 className="text-lg font-bold text-on-surface">{isEditing ? 'Edit Event' : 'Create New Event'}</h2>
+              <p className="text-xs text-on-surface-variant">Basic information</p>
             </div>
           </div>
 
@@ -52,7 +54,7 @@ export default function StitchCreateEvent({ onClose, onCreated }) {
           </button>
         </div>
 
-        {/* Stepper Form */}
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-xs font-semibold text-on-surface-variant block mb-1">Event Title</label>
@@ -169,7 +171,7 @@ export default function StitchCreateEvent({ onClose, onCreated }) {
               disabled={isSubmitting}
               className="px-6 py-2 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-secondary-container transition-all disabled:opacity-60"
             >
-              {isSubmitting ? 'Publishing…' : 'Publish Event'}
+              {isSubmitting ? 'Saving…' : isEditing ? 'Save Changes' : 'Publish Event'}
             </button>
           </div>
         </form>

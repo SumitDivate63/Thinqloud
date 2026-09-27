@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase';
 import { collection, query, orderBy, limit, onSnapshot, getCountFromServer } from 'firebase/firestore';
 
-export default function StitchOrganizerDashboard({ events = [], onLaunchLiveQR, onCreateEvent }) {
+export default function StitchOrganizerDashboard({ events = [], onLaunchLiveQR, onCreateEvent, onEditEvent }) {
   const [totals, setTotals] = useState({ registrations: 0, attendance: 0, feedbackCount: 0, avgRating: null });
   const [recentRegistrations, setRecentRegistrations] = useState([]);
 
@@ -115,17 +115,25 @@ export default function StitchOrganizerDashboard({ events = [], onLaunchLiveQR, 
               <div className="text-xs text-on-surface-variant text-center py-4">No events yet. Create one to get started.</div>
             )}
             {events.slice(0, 6).map(ev => (
-              <div key={ev.id} className="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant/40 flex items-center justify-between">
-                <div>
+              <div key={ev.id} className="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant/40 flex items-center justify-between gap-2">
+                <div className="min-w-0">
                   <div className="font-semibold text-xs text-on-surface line-clamp-1">{ev.title}</div>
                   <div className="text-[11px] text-on-surface-variant mt-0.5">Capacity {ev.capacity}</div>
                 </div>
-                <button
-                  onClick={onLaunchLiveQR}
-                  className="px-2.5 py-1 rounded bg-secondary text-on-secondary text-[11px] font-bold"
-                >
-                  Scan
-                </button>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <button
+                    onClick={() => onEditEvent?.(ev)}
+                    className="px-2.5 py-1 rounded bg-surface-container-lowest border border-outline-variant text-on-surface text-[11px] font-bold hover:bg-surface-container-high"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={onLaunchLiveQR}
+                    className="px-2.5 py-1 rounded bg-secondary text-on-secondary text-[11px] font-bold"
+                  >
+                    Scan
+                  </button>
+                </div>
               </div>
             ))}
           </div>

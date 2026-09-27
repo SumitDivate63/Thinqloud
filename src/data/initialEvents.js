@@ -1,5 +1,5 @@
 import { db } from '../firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 
 // Creates a new event directly in Firestore. The real-time listener in
 // App.jsx picks it up automatically - no local/optimistic copy is kept,
@@ -26,4 +26,22 @@ export async function createNewEvent(formData) {
   await setDoc(doc(db, 'events', eventId), newEvent);
 
   return newEvent;
+}
+
+// Updates fields on an existing event in Firestore.
+export async function updateExistingEvent(eventId, formData) {
+  const updates = {
+    title: formData.title || 'Untitled Event',
+    category: formData.category || 'Enterprise Tech',
+    date: formData.date || 'Nov 20, 2026',
+    location: formData.location || 'Moscone Center, SF',
+    capacity: Number(formData.capacity) || 500,
+    description: formData.description || '',
+    banner: formData.banner || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80',
+    updatedAt: new Date().toISOString()
+  };
+
+  await updateDoc(doc(db, 'events', eventId), updates);
+
+  return { id: eventId, eventId, ...updates };
 }

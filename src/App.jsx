@@ -64,6 +64,7 @@ export default function App() {
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isCreateEventOpen, setIsCreateEventOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
 
   // Auth state listener with strict role resolution
   useEffect(() => {
@@ -251,6 +252,7 @@ export default function App() {
             events={events}
             onLaunchLiveQR={() => setActiveView('admin_scanner')}
             onCreateEvent={() => setIsCreateEventOpen(true)}
+            onEditEvent={(ev) => setEditingEvent(ev)}
           />
         )}
 
@@ -282,12 +284,16 @@ export default function App() {
         }}
       />
 
-      {isCreateEventOpen && (
+      {(isCreateEventOpen || editingEvent) && (
         <StitchCreateEvent
-          onClose={() => setIsCreateEventOpen(false)}
-          onCreated={(createdEvent) => {
-            if (createdEvent) {
-              setEvents(prev => [createdEvent, ...prev.filter(e => e.id !== createdEvent.id)]);
+          event={editingEvent}
+          onClose={() => {
+            setIsCreateEventOpen(false);
+            setEditingEvent(null);
+          }}
+          onCreated={(savedEvent) => {
+            if (savedEvent) {
+              setEvents(prev => [savedEvent, ...prev.filter(e => e.id !== savedEvent.id)]);
             }
             setActiveView(isAdmin ? 'admin_dashboard' : 'landing');
           }}
