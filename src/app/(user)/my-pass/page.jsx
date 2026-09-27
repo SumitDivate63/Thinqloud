@@ -5,19 +5,49 @@ import { auth, db } from '../../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 
-export default function UserDigitalPassPage() {
+export default function UserDigitalPassPage({ registeredEventIds = ['event-1'] }) {
   const [currentUser, setCurrentUser] = useState(null);
-  const [attendanceStatus, setAttendanceStatus] = useState(null); // null | { markedAt: string }
+  const [selectedEventId, setSelectedEventId] = useState(registeredEventIds[0] || 'event-1');
+  const [attendanceStatus, setAttendanceStatus] = useState(null);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [feedbackRating, setFeedbackRating] = useState(5);
   const [feedbackComment, setFeedbackComment] = useState('');
+
+  const sampleEventsMap = {
+    'event-1': {
+      id: 'event-1',
+      title: 'ThinqSummit 2026: Global Cloud & AI Architecture',
+      category: 'Enterprise Tech',
+      date: 'November 12 - 14, 2026',
+      location: 'Moscone Center, San Francisco & Online'
+    },
+    'event-2': {
+      id: 'event-2',
+      title: 'Autonomous AI Agents & Neural Consensus Symposium',
+      category: 'Hackathons & AI',
+      date: 'November 13, 2026',
+      location: 'Stage 2 — AI Hub'
+    },
+    'event-3': {
+      id: 'event-3',
+      title: 'Zero-Trust Kernel & eBPF Security Operations Workshop',
+      category: 'Academic & Research',
+      date: 'November 14, 2026',
+      location: 'Stage 4 — Security Lab'
+    }
+  };
+
+  useEffect(() => {
+    if (registeredEventIds.length > 0 && !registeredEventIds.includes(selectedEventId)) {
+      setSelectedEventId(registeredEventIds[0]);
+    }
+  }, [registeredEventIds]);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
       setCurrentUser(u);
       if (u) {
-        // Listen to attendance doc uid_event-2026-sf
-        const attRef = doc(db, 'attendance', `${u.uid}_event-2026-sf`);
+        const attRef = doc(db, 'attendance', `${u.uid}_${selectedEventId}`);
         const unsubAtt = onSnapshot(attRef, (snap) => {
           if (snap.exists()) {
             setAttendanceStatus(snap.data());
@@ -29,10 +59,12 @@ export default function UserDigitalPassPage() {
       }
     });
     return () => unsub();
-  }, []);
+  }, [selectedEventId]);
+
+  const currentEvent = sampleEventsMap[selectedEventId] || sampleEventsMap['event-1'];
 
   const samplePassToken = currentUser 
-    ? btoa(JSON.stringify({ registrationId: `${currentUser.uid}_event-2026-sf`, uid: currentUser.uid, eventId: 'event-2026-sf', ts: Date.now() }))
+    ? btoa(JSON.stringify({ registrationId: `${currentUser.uid}_${currentEvent.id}`, uid: currentUser.uid, eventId: currentEvent.id, ts: Date.now() }))
     : 'GUEST_PASS_TOKEN';
 
   const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(samplePassToken)}`;
@@ -45,30 +77,37 @@ export default function UserDigitalPassPage() {
   return (
     <div className="w-full bg-background min-h-screen p-4 md:p-8 space-y-6 max-w-5xl mx-auto">
       
-      {/* Title Header */}
+      {/* Title Header & Event Selector Tabs */}
       <div className="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-secondary text-xs font-semibold">
             <span className="material-symbols-outlined text-[14px]">badge</span>
-            MY EVENT PASS & CHECK-IN STATUS
+            MY REGISTERED EVENT PASSES ({registeredEventIds.length})
           </div>
           <h1 className="text-2xl font-bold text-on-surface tracking-tight mt-1">Digital Event Access Pass</h1>
           <p className="text-xs text-on-surface-variant">Present this pass on your phone screen to the event admin at venue entrance.</p>
         </div>
 
-        {/* Live Attendance Status Badge */}
-        <div>
-          {attendanceStatus ? (
-            <div className="px-4 py-2 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center gap-2 text-xs font-bold">
-              <span className="material-symbols-outlined text-emerald-600 text-[18px]">verified</span>
-              <span>Checked in at {attendanceStatus.markedAtTime || '10:04 AM'}</span>
-            </div>
-          ) : (
-            <div className="px-4 py-2 rounded-xl bg-amber-50 text-amber-900 border border-amber-300 flex items-center gap-2 text-xs font-bold">
-              <span className="material-symbols-outlined text-amber-600 text-[18px]">schedule</span>
-              <span>Not yet checked in (Awaiting Admin Scan)</span>
-            </div>
-          )}
+        {/* Registered Event Selector Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+          {registeredEventIds.map(evId => {
+            const ev = sampleEventsMap[evId];
+            if (!ev) return null;
+            const isSelected = selectedEventId === evId;
+            return (
+              <button
+                key={evId}
+                onClick={() => setSelectedEventId(evId)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                  isSelected
+                    ? 'bg-secondary text-on-secondary shadow-sm'
+                    : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high'
+                }`}
+              >
+                {evId === 'event-1' ? 'ThinqSummit' : evId === 'event-2' ? 'AI Symposium' : 'Zero-Trust Lab'}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -78,8 +117,8 @@ export default function UserDigitalPassPage() {
         {/* Left Pass Card (5 Cols) */}
         <div className="lg:col-span-5 bg-gradient-to-br from-primary-container to-secondary-container text-on-secondary rounded-2xl p-6 shadow-xl space-y-6 relative overflow-hidden text-center">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-white/80">EventPass Digital Token</span>
-            <span className="px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-[10px] font-extrabold uppercase">
+            <span className="text-xs font-bold uppercase tracking-wider text-white/80">{currentEvent.category}</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 text-[10px] font-extrabold uppercase">
               CONFIRMED PASS
             </span>
           </div>
@@ -107,16 +146,16 @@ export default function UserDigitalPassPage() {
           
           {/* Registered Event Card */}
           <div className="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-6 shadow-sm space-y-3">
-            <span className="text-xs font-bold text-secondary uppercase tracking-wider">Registered Flagship Event</span>
-            <h3 className="text-lg font-bold text-on-surface">ThinqSummit 2026: Global Cloud & AI Architecture</h3>
+            <span className="text-xs font-bold text-secondary uppercase tracking-wider">{currentEvent.category}</span>
+            <h3 className="text-lg font-bold text-on-surface">{currentEvent.title}</h3>
             <div className="space-y-1.5 text-xs text-on-surface-variant">
               <div className="flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[16px] text-secondary">calendar_month</span>
-                <span>November 12 - 14, 2026</span>
+                <span>{currentEvent.date}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[16px] text-secondary">location_on</span>
-                <span>Moscone Center, San Francisco</span>
+                <span>{currentEvent.location}</span>
               </div>
             </div>
           </div>

@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { SESSIONS, SPEAKERS } from '../../data/conferenceData';
 import EventDetailsAndPassModal from './EventDetailsAndPassModal';
 
-export default function StitchLandingPage({ onSelectEvent, onRegisterEvent, onOpenQRScanner, currentUser }) {
+export default function StitchLandingPage({
+  registeredEventIds = ['event-1'],
+  onConfirmRegistration,
+  onSelectEvent,
+  onRegisterEvent,
+  onOpenQRScanner,
+  currentUser
+}) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Registered Events state for user
-  const [registeredEventIds, setRegisteredEventIds] = useState(['event-1']);
   const [activeModalEvent, setActiveModalEvent] = useState(null);
 
   const categories = ['All', 'Academic & Research', 'Enterprise Tech', 'Hackathons & AI', 'Workshops'];
@@ -61,7 +65,9 @@ export default function StitchLandingPage({ onSelectEvent, onRegisterEvent, onOp
   });
 
   const handleConfirmRegistration = (eventId) => {
-    setRegisteredEventIds(prev => Array.from(new Set([...prev, eventId])));
+    if (onConfirmRegistration) {
+      onConfirmRegistration(eventId);
+    }
   };
 
   return (

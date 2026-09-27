@@ -26,6 +26,26 @@ export default function App() {
   const [activeView, setActiveView] = useState('landing');
   const [selectedEventId, setSelectedEventId] = useState('event-1');
 
+  // Persistent User Registrations State (LIFTS REGISTRATION STATE AT TOP LEVEL)
+  const [registeredEventIds, setRegisteredEventIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('eventhub_registered_ids');
+      return saved ? JSON.parse(saved) : ['event-1'];
+    } catch (e) {
+      return ['event-1'];
+    }
+  });
+
+  const handleConfirmRegistration = (eventId) => {
+    setRegisteredEventIds(prev => {
+      const updated = Array.from(new Set([...prev, eventId]));
+      try {
+        localStorage.setItem('eventhub_registered_ids', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isCreateEventOpen, setIsCreateEventOpen] = useState(false);
@@ -135,7 +155,7 @@ export default function App() {
                 }`}
               >
                 <span className="material-symbols-outlined text-[18px]">badge</span>
-                <span>My Digital Pass & Status</span>
+                <span>My Digital Pass & Status ({registeredEventIds.length})</span>
               </button>
             </>
           )}
@@ -184,6 +204,8 @@ export default function App() {
         {/* User Views */}
         {!isAdmin && activeView === 'landing' && (
           <StitchLandingPage
+            registeredEventIds={registeredEventIds}
+            onConfirmRegistration={handleConfirmRegistration}
             onSelectEvent={(id) => {
               setSelectedEventId(id);
               setActiveView('event_details');
@@ -193,6 +215,7 @@ export default function App() {
               else setActiveView('my_pass');
             }}
             onOpenQRScanner={() => setActiveView('my_pass')}
+            currentUser={currentUser}
           />
         )}
 
@@ -208,7 +231,9 @@ export default function App() {
         )}
 
         {!isAdmin && activeView === 'my_pass' && (
-          <UserDigitalPassPage />
+          <UserDigitalPassPage
+            registeredEventIds={registeredEventIds}
+          />
         )}
 
         {/* Admin Views (sumitdivate3@gmail.com) */}
