@@ -25,58 +25,30 @@ export default function StitchLandingPage({
       
       {/* Hero Section */}
       <section className="relative w-full bg-surface-container-low border-b border-outline-variant/60 py-12 md:py-16 px-4 md:px-8">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex-1 space-y-4 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-secondary text-xs font-semibold tracking-wide">
-              <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-              CAMPUS & ENTERPRISE EVENT OPERATIONS PLATFORM
-            </div>
-            <h1 className="text-3xl md:text-5xl font-extrabold text-on-surface tracking-tight leading-tight">
-              Centralized Event Discovery, <br />
-              <span className="text-secondary">OAuth SSO & Dynamic QR Attendance</span>
-            </h1>
-            <p className="text-base text-on-surface-variant max-w-2xl leading-relaxed">
-              Streamline academic symposiums, enterprise conferences, and hands-on workshops with automated Google OAuth registration, live organizer dashboards, and verifiable QR check-ins.
-            </p>
-            <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
-              <button
-                onClick={() => events[0] && setActiveModalEvent(events[0])}
-                disabled={events.length === 0}
-                className="px-6 py-3 rounded-lg bg-secondary text-on-secondary font-semibold text-sm hover:bg-secondary-container transition-all shadow-md flex items-center gap-2 disabled:opacity-60"
-              >
-                <span className="material-symbols-outlined text-[18px]">badge</span>
-                <span>Register for EventPass</span>
-              </button>
-              <button
-                onClick={() => events[0] && setActiveModalEvent(events[0])}
-                disabled={events.length === 0}
-                className="px-6 py-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-semibold text-sm hover:bg-surface-container-low transition-all flex items-center gap-2 disabled:opacity-60"
-              >
-                <span className="material-symbols-outlined text-[18px]">qr_code_2</span>
-                <span>View Digital Pass & QR</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Quick Metrics Card */}
-          <div className="w-full md:w-80 bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-6 shadow-lg space-y-4">
-            <div className="flex items-center justify-between border-b border-outline-variant/40 pb-3">
-              <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Live System Status</span>
-              <span className="inline-flex items-center gap-1 text-xs text-secondary font-semibold">
-                <span className="material-symbols-outlined text-[14px]">check_circle</span>
-                All Services OK
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="p-3 rounded-lg bg-surface-container-low">
-                <div className="text-2xl font-bold text-on-surface font-mono">8,500+</div>
-                <div className="text-xs text-on-surface-variant mt-0.5">Active Attendees</div>
-              </div>
-              <div className="p-3 rounded-lg bg-surface-container-low">
-                <div className="text-2xl font-bold text-secondary font-mono">98.4%</div>
-                <div className="text-xs text-on-surface-variant mt-0.5">Verified QR Rate</div>
-              </div>
-            </div>
+        <div className="max-w-6xl mx-auto text-center md:text-left space-y-4">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-on-surface tracking-tight leading-tight">
+            Campus &amp; Enterprise Events
+          </h1>
+          <p className="text-base text-on-surface-variant max-w-2xl leading-relaxed">
+            Sign in with Google, register for an event, and get a QR pass to show at the door for check-in.
+          </p>
+          <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
+            <button
+              onClick={() => events[0] && setActiveModalEvent(events[0])}
+              disabled={events.length === 0}
+              className="px-6 py-3 rounded-lg bg-secondary text-on-secondary font-semibold text-sm hover:bg-secondary-container transition-all shadow-md flex items-center gap-2 disabled:opacity-60"
+            >
+              <span className="material-symbols-outlined text-[18px]">badge</span>
+              <span>Register for an Event</span>
+            </button>
+            <button
+              onClick={() => events[0] && setActiveModalEvent(events[0])}
+              disabled={events.length === 0}
+              className="px-6 py-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-semibold text-sm hover:bg-surface-container-low transition-all flex items-center gap-2 disabled:opacity-60"
+            >
+              <span className="material-symbols-outlined text-[18px]">qr_code_2</span>
+              <span>View My Digital Pass</span>
+            </button>
           </div>
         </div>
       </section>
