@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { SESSIONS, SPEAKERS } from '../../data/conferenceData';
-import { DEFAULT_EVENTS } from '../../data/initialEvents';
 import EventDetailsAndPassModal from './EventDetailsAndPassModal';
 
 export default function StitchLandingPage({
@@ -15,9 +14,7 @@ export default function StitchLandingPage({
 
   const categories = ['All', 'Academic & Research', 'Enterprise Tech', 'Hackathons & AI', 'Workshops'];
 
-  const eventsList = events && events.length > 0 ? events : DEFAULT_EVENTS;
-
-  const filteredEvents = eventsList.filter(ev => {
+  const filteredEvents = events.filter(ev => {
     const matchCat = selectedCategory === 'All' || ev.category === selectedCategory;
     const matchSearch = !searchQuery || (ev.title && ev.title.toLowerCase().includes(searchQuery.toLowerCase())) || (ev.location && ev.location.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchCat && matchSearch;
@@ -43,15 +40,17 @@ export default function StitchLandingPage({
             </p>
             <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
               <button
-                onClick={() => setActiveModalEvent(eventsList[0])}
-                className="px-6 py-3 rounded-lg bg-secondary text-on-secondary font-semibold text-sm hover:bg-secondary-container transition-all shadow-md flex items-center gap-2"
+                onClick={() => events[0] && setActiveModalEvent(events[0])}
+                disabled={events.length === 0}
+                className="px-6 py-3 rounded-lg bg-secondary text-on-secondary font-semibold text-sm hover:bg-secondary-container transition-all shadow-md flex items-center gap-2 disabled:opacity-60"
               >
                 <span className="material-symbols-outlined text-[18px]">badge</span>
                 <span>Register for EventPass</span>
               </button>
               <button
-                onClick={() => setActiveModalEvent(eventsList[0])}
-                className="px-6 py-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-semibold text-sm hover:bg-surface-container-low transition-all flex items-center gap-2"
+                onClick={() => events[0] && setActiveModalEvent(events[0])}
+                disabled={events.length === 0}
+                className="px-6 py-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-semibold text-sm hover:bg-surface-container-low transition-all flex items-center gap-2 disabled:opacity-60"
               >
                 <span className="material-symbols-outlined text-[18px]">qr_code_2</span>
                 <span>View Digital Pass & QR</span>
@@ -128,6 +127,12 @@ export default function StitchLandingPage({
             <h2 className="text-xl font-bold text-on-surface tracking-tight">Active Events & Conferences</h2>
             <span className="text-xs text-on-surface-variant font-medium">Showing {filteredEvents.length} Event(s)</span>
           </div>
+
+          {filteredEvents.length === 0 && (
+            <div className="p-10 rounded-xl bg-surface-container-lowest border border-dashed border-outline-variant/60 text-center text-sm text-on-surface-variant">
+              No events published yet.
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {filteredEvents.map((ev) => {

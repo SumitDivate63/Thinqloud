@@ -13,7 +13,6 @@ import { auth, db } from './firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { resolveUserRole, HARDCODED_ADMIN_EMAIL, logoutUser } from './lib/roleAuth';
-import { DEFAULT_EVENTS, getLocalEvents, saveLocalEvents } from './data/initialEvents';
 import AdminAttendanceScannerPage from './app/(admin)/scanner/page';
 import UserDigitalPassPage from './app/(user)/my-pass/page';
 
@@ -22,39 +21,20 @@ export default function App() {
   const [userRole, setUserRole] = useState('user'); // 'user' | 'admin'
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Dynamic Events State synced with Firestore DB & LocalStorage
-  const [events, setEvents] = useState(() => getLocalEvents());
+  // Events state - sourced live from Firestore only. Previously this also
+  // permanently merged in a set of hardcoded fixture events (including one
+  // falsely labeled "created from Admin Panel and synced across Database"),
+  // so every visitor saw fake events that didn't exist in the database and
+  // could never actually be managed by the admin.
+  const [events, setEvents] = useState([]);
 
-  // Subscribe to real-time Firestore events collection
   useEffect(() => {
-    try {
-      const unsub = onSnapshot(collection(db, 'events'), (snapshot) => {
-        if (!snapshot.empty) {
-          const dbEvents = snapshot.docs.map(docSnap => ({
-            id: docSnap.id,
-            ...docSnap.data()
-          }));
-          
-          setEvents(prevEvents => {
-            const map = new Map();
-            // Default events first
-            DEFAULT_EVENTS.forEach(e => map.set(e.id, e));
-            // Local events second
-            prevEvents.forEach(e => map.set(e.id, e));
-            // Firestore events top priority
-            dbEvents.forEach(e => map.set(e.id, e));
-            const merged = Array.from(map.values());
-            saveLocalEvents(merged);
-            return merged;
-          });
-        }
-      }, (err) => {
-        console.warn('Firestore events listener error (using local storage fallback):', err);
-      });
-      return () => unsub();
-    } catch (e) {
-      console.warn('Firestore events snapshot failed:', e);
-    }
+    const unsub = onSnapshot(collection(db, 'events'), (snapshot) => {
+      setEvents(snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() })));
+    }, (err) => {
+      console.warn('Firestore events listener error:', err);
+    });
+    return () => unsub();
   }, []);
 
   // Active Panel Navigation

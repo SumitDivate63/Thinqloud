@@ -1,10 +1,8 @@
 import React from 'react';
 import { SESSIONS, SPEAKERS } from '../../data/conferenceData';
-import { DEFAULT_EVENTS } from '../../data/initialEvents';
 
 export default function StitchEventDetails({ eventId, events = [], onBack, onRegister }) {
-  const eventsList = events && events.length > 0 ? events : DEFAULT_EVENTS;
-  const currentEvent = eventsList.find(e => (e.id === eventId || e.eventId === eventId)) || eventsList[0];
+  const currentEvent = events.find(e => (e.id === eventId || e.eventId === eventId)) || events[0];
 
   return (
     <div className="w-full bg-background min-h-screen p-4 md:p-8 space-y-6">

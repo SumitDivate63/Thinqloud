@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from '../../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { DEFAULT_EVENTS } from '../../../data/initialEvents';
 import { buildPassToken, submitEventFeedback } from '../../../lib/eventOps';
 
 export default function UserDigitalPassPage({ registeredEventIds = [], events = [] }) {
@@ -17,8 +16,7 @@ export default function UserDigitalPassPage({ registeredEventIds = [], events = 
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
   const [feedbackError, setFeedbackError] = useState('');
 
-  const eventsList = events && events.length > 0 ? events : DEFAULT_EVENTS;
-  const eventsMap = eventsList.reduce((acc, ev) => {
+  const eventsMap = events.reduce((acc, ev) => {
     const key = ev.id || ev.eventId;
     acc[key] = ev;
     return acc;
