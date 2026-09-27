@@ -211,11 +211,23 @@ export default function EventDetailsAndPassModal({ event, isOpen, onClose, isReg
                     <p className="text-xs text-white/80">{currentUser?.email || 'user@thinqsummit.io'}</p>
                   </div>
 
-                  {/* Rendered QR Image */}
-                  <div className="inline-block p-4 bg-white rounded-2xl shadow-2xl border-2 border-white">
-                    <img src={qrImageUrl} alt="Digital QR Pass" className="w-48 h-48 mx-auto block" />
-                    <div className="mt-2 text-[10px] font-mono font-bold text-slate-700 truncate max-w-[180px] mx-auto">
-                      TOKEN: {samplePassToken.substring(0, 16)}...
+                  {/* Rendered QR Image & Full Pass Token ID */}
+                  <div className="inline-block p-4 bg-white rounded-2xl shadow-2xl border-2 border-white max-w-full text-left">
+                    <img src={qrImageUrl} alt="Digital QR Pass" className="w-48 h-48 mx-auto block rounded-lg" />
+                    <div className="mt-3 p-2 rounded-xl bg-slate-100 border border-slate-200">
+                      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center justify-between">
+                        <span>Pass Token ID</span>
+                        <button
+                          type="button"
+                          onClick={() => navigator.clipboard?.writeText(samplePassToken)}
+                          className="text-[10px] font-extrabold text-secondary hover:underline uppercase"
+                        >
+                          Copy
+                        </button>
+                      </div>
+                      <div className="text-[11px] font-mono font-bold text-slate-800 break-all select-all leading-tight max-h-16 overflow-y-auto">
+                        {samplePassToken}
+                      </div>
                     </div>
                   </div>
 

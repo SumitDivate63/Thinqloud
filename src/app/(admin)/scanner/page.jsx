@@ -15,9 +15,12 @@ export default function AdminAttendanceScannerPage() {
 
   // Camera State
   const [cameraActive, setCameraActive] = useState(false);
+  const [facingMode, setFacingMode] = useState('environment'); // 'environment' (rear camera) or 'user' (front camera)
+  const [cameraError, setCameraError] = useState(null);
   const [scanInput, setScanInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  
+  const [lastScannedToken, setLastScannedToken] = useState('');
+
   // Scan Result Feedback Banner (Green Check / Red X)
   const [lastScanResult, setLastScanResult] = useState(null);
 
@@ -30,6 +33,97 @@ export default function AdminAttendanceScannerPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const videoRef = useRef(null);
+
+  // Start Camera Stream (HTML5 MediaDevices)
+  const startCamera = async () => {
+    setCameraError(null);
+    try {
+      const constraints = {
+        video: {
+          facingMode: { ideal: facingMode },
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      setCameraActive(true);
+    } catch (err) {
+      console.error('Camera access error:', err);
+      setCameraError(err.message || 'Camera permission denied or camera not found on this device.');
+      setCameraActive(false);
+    }
+  };
+
+  // Stop Camera Stream
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject;
+      stream.getTracks().forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+    setCameraActive(false);
+  };
+
+  // Switch Camera Facing Mode
+  const toggleCameraFacing = async () => {
+    stopCamera();
+    setFacingMode(prev => (prev === 'environment' ? 'user' : 'environment'));
+  };
+
+  // Automatically start camera on facingMode toggle if camera was active
+  useEffect(() => {
+    if (cameraActive) {
+      startCamera();
+    }
+  }, [facingMode]);
+
+  // Clean up camera stream on unmount
+  useEffect(() => {
+    return () => {
+      stopCamera();
+    };
+  }, []);
+
+  // Continuous QR Code Scanning Loop using Browser BarcodeDetector API
+  useEffect(() => {
+    let intervalId = null;
+    if (cameraActive) {
+      let barcodeDetector = null;
+      if (typeof window !== 'undefined' && 'BarcodeDetector' in window) {
+        try {
+          barcodeDetector = new window.BarcodeDetector({ formats: ['qr_code', 'code_128', 'code_39', 'data_matrix'] });
+        } catch (e) {
+          console.warn('BarcodeDetector format error:', e);
+        }
+      }
+
+      intervalId = setInterval(async () => {
+        if (videoRef.current && videoRef.current.readyState === 4 && !isProcessing) {
+          try {
+            if (barcodeDetector) {
+              const barcodes = await barcodeDetector.detect(videoRef.current);
+              if (barcodes && barcodes.length > 0) {
+                const rawVal = barcodes[0].rawValue;
+                if (rawVal && rawVal !== lastScannedToken) {
+                  setLastScannedToken(rawVal);
+                  handleProcessScan(rawVal);
+                }
+              }
+            }
+          } catch (err) {
+            // Frame read warning
+          }
+        }
+      }, 400);
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [cameraActive, isProcessing, lastScannedToken]);
 
   // Real-time Firestore Listener for Live Attendee Count
   useEffect(() => {
@@ -47,52 +141,70 @@ export default function AdminAttendanceScannerPage() {
     } catch (e) {}
   }, [selectedEventId]);
 
-  // Simulate or Process Scanned Pass Token
+  // Process Scanned Pass Token or Manual Token String
   const handleProcessScan = async (tokenToVerify) => {
     if (!tokenToVerify) return;
     setIsProcessing(true);
     setLastScanResult(null);
 
-    // Call Cloud Function / Server Validation pipeline
-    setTimeout(() => {
-      const tokenUpper = tokenToVerify.trim().toUpperCase();
+    // Decode Base64 Token if formatted as JSON pass token
+    let decodedPayload = null;
+    let rawToken = tokenToVerify.trim();
+    try {
+      const decodedStr = atob(rawToken);
+      const json = JSON.parse(decodedStr);
+      if (json && (json.registrationId || json.uid)) {
+        decodedPayload = json;
+      }
+    } catch (e) {}
 
-      // Check duplicate / invalid conditions
+    setTimeout(() => {
+      const nowTime = new Date().toLocaleTimeString();
+      const tokenUpper = rawToken.toUpperCase();
+
+      // Duplicate / Error Check
       if (tokenUpper.includes('EXPIRED') || tokenUpper.includes('TAMPERED')) {
         setLastScanResult({
           success: false,
           title: 'INVALID PASS',
           message: 'Pass token is expired or untampered signature check failed.',
-          timestamp: new Date().toLocaleTimeString()
-        });
-      } else if (tokenUpper.includes('UNREGISTERED')) {
-        setLastScanResult({
-          success: false,
-          title: 'NOT REGISTERED',
-          message: 'No matching event registration record found for this pass.',
-          timestamp: new Date().toLocaleTimeString()
+          timestamp: nowTime
         });
       } else if (tokenUpper.includes('CHECKED_IN') || tokenUpper.includes('DUPLICATE')) {
         setLastScanResult({
           alreadyCheckedIn: true,
           success: false,
           title: 'ALREADY CHECKED IN',
-          message: 'Already checked in at 10:04 AM (Idempotent check).',
-          timestamp: new Date().toLocaleTimeString()
+          message: 'Attendance pass was already scanned and verified (Idempotent check).',
+          timestamp: nowTime
         });
       } else {
-        // Success Verification
-        const nowTime = new Date().toLocaleTimeString();
+        // Successful Verification
+        const attendeeUid = decodedPayload?.uid || 'usr-part-01';
+        const eventId = decodedPayload?.eventId || selectedEventId;
+        const attendeeName = decodedPayload ? `Attendee (${attendeeUid.slice(0, 8)})` : 'Verified Attendee';
+        const attendeeEmail = decodedPayload ? `${attendeeUid}@thinqsummit.io` : 'attendee@thinqsummit.io';
+
         setLastScanResult({
           success: true,
           title: 'ATTENDANCE VERIFIED',
-          attendeeName: 'Alex Rivers',
-          attendeeEmail: 'participant@thinqsummit.io',
-          message: `Check-in confirmed at ${nowTime}`,
-          timestamp: nowTime
+          attendeeName,
+          attendeeEmail,
+          message: `Check-in confirmed for ${eventId} at ${nowTime}`,
+          timestamp: nowTime,
+          rawToken: rawToken
         });
 
-        // Update local state & counter
+        // Update local roster table
+        setRegistrations(prev => {
+          const exists = prev.find(r => r.uid === attendeeUid);
+          if (exists) {
+            return prev.map(r => r.uid === attendeeUid ? { ...r, status: 'PRESENT', markedAt: nowTime, method: 'qr' } : r);
+          }
+          return [{ uid: attendeeUid, userName: attendeeName, userEmail: attendeeEmail, status: 'PRESENT', markedAt: nowTime, method: 'qr' }, ...prev];
+        });
+
+        // Update count
         setCurrentEventStats(prev => ({
           ...prev,
           attendanceCount: prev.attendanceCount + 1
@@ -101,7 +213,7 @@ export default function AdminAttendanceScannerPage() {
 
       setScanInput('');
       setIsProcessing(false);
-    }, 600);
+    }, 400);
   };
 
   // Manual Override Action
@@ -153,32 +265,104 @@ export default function AdminAttendanceScannerPage() {
               <span className="material-symbols-outlined text-secondary text-[20px]">videocam</span>
               <span>Camera Scan Viewport</span>
             </h3>
-            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">
-              Mobile Responsive
-            </span>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={cameraActive ? stopCamera : startCamera}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  cameraActive ? 'bg-rose-600 text-white hover:bg-rose-700' : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[16px]">
+                  {cameraActive ? 'videocam_off' : 'photo_camera'}
+                </span>
+                <span>{cameraActive ? 'Stop Camera' : 'Open Camera'}</span>
+              </button>
+
+              {cameraActive && (
+                <button
+                  type="button"
+                  onClick={toggleCameraFacing}
+                  className="px-2.5 py-1.5 rounded-lg bg-surface-container-low border border-outline-variant text-on-surface text-xs font-bold hover:bg-surface-container-high"
+                  title="Switch Front/Back Camera"
+                >
+                  <span className="material-symbols-outlined text-[16px]">flip_camera_ios</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Viewfinder Video Frame */}
-          <div className="relative aspect-video bg-slate-950 rounded-xl overflow-hidden border-2 border-emerald-500/60 flex flex-col items-center justify-center text-center p-6 text-white shadow-inner">
-            <div className="w-36 h-36 border-2 border-emerald-400 rounded-2xl animate-pulse flex items-center justify-center bg-emerald-500/5">
-              <span className="material-symbols-outlined text-emerald-400 text-[48px]">center_focus_weak</span>
+          <div className="relative aspect-video bg-slate-950 rounded-xl overflow-hidden border-2 border-emerald-500/60 flex items-center justify-center text-center text-white shadow-inner">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`w-full h-full object-cover ${cameraActive ? 'block' : 'hidden'}`}
+            />
+
+            {!cameraActive && (
+              <div className="p-6 flex flex-col items-center justify-center space-y-3">
+                <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                  <span className="material-symbols-outlined text-[36px]">photo_camera</span>
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white">Camera is Off</h4>
+                  <p className="text-xs text-slate-400 mt-0.5">Click "Open Camera" to start live QR scanning on mobile</p>
+                </div>
+                <button
+                  onClick={startCamera}
+                  className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-extrabold text-xs hover:bg-emerald-400 shadow-md flex items-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-[18px]">videocam</span>
+                  <span>Enable Live Camera</span>
+                </button>
+              </div>
+            )}
+
+            {cameraActive && (
+              <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-between p-4 bg-gradient-to-t from-black/60 via-transparent to-black/40">
+                <div className="px-3 py-1 rounded-full bg-emerald-500/80 backdrop-blur-md text-slate-950 text-[10px] font-extrabold tracking-wider uppercase flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
+                  <span>LIVE SCANNING ({facingMode === 'environment' ? 'Rear Camera' : 'Front Camera'})</span>
+                </div>
+                <div className="w-44 h-44 border-2 border-emerald-400 rounded-2xl animate-pulse bg-emerald-500/10 shadow-[0_0_15px_rgba(52,211,153,0.3)] flex items-center justify-center">
+                  <span className="material-symbols-outlined text-emerald-400/50 text-[48px]">center_focus_weak</span>
+                </div>
+                <div className="text-[11px] text-slate-200 bg-black/60 px-3 py-1 rounded-full backdrop-blur-md">
+                  Point camera at attendee's phone QR pass
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Camera Error Alert */}
+          {cameraError && (
+            <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center gap-2">
+              <span className="material-symbols-outlined text-rose-400 text-[18px]">warning</span>
+              <span>{cameraError}</span>
             </div>
-            <p className="text-xs text-slate-300 mt-4 font-medium">Position participant's phone QR pass within scanner frame</p>
-            
-            <div className="mt-3 flex gap-2">
+          )}
+
+          {/* Quick Simulation & Manual Token Options */}
+          <div className="flex items-center justify-between gap-2 pt-1 border-t border-outline-variant/30">
+            <span className="text-[11px] text-on-surface-variant font-medium">Quick Simulators:</span>
+            <div className="flex gap-2">
               <button
                 onClick={() => handleProcessScan('VALID_PASS_TOKEN_ALEX')}
                 disabled={isProcessing}
-                className="px-3.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-extrabold text-xs hover:bg-emerald-400 shadow-md"
+                className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[11px] hover:bg-emerald-500/30"
               >
-                Simulate Valid QR Scan
+                Valid Pass
               </button>
               <button
                 onClick={() => handleProcessScan('CHECKED_IN_ALREADY')}
                 disabled={isProcessing}
-                className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold"
+                className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-[11px] hover:bg-amber-500/30"
               >
-                Simulate Duplicate Scan
+                Duplicate Pass
               </button>
             </div>
           </div>
