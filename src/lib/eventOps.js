@@ -45,21 +45,21 @@ export async function getEventAttendanceCount(eventId) {
 
 // Registers `user` for `event`. Idempotent: calling it again for an existing
 // registration just returns the same pass instead of erroring.
+//
+// This does NOT pre-check whether a registration already exists via getDoc -
+// firestore.rules denies `update` on registrations entirely, so attempting to
+// write over an existing one always comes back permission-denied. That is
+// used directly as the "already registered" signal, rather than reading the
+// document first (a get() on a not-yet-existing doc under an owner-only read
+// rule is its own separate hazard - see firestore.rules for the exists()
+// docs on the read rule, which is why other checks in this file still need it).
 export async function registerUserForEvent(user, event) {
   if (!user) throw new Error('Sign in required to register.');
 
   const eventId = event.id || event.eventId;
   const registrationId = `${user.uid}_${eventId}`;
   const regRef = doc(db, 'registrations', registrationId);
-
-  const existing = await getDoc(regRef);
-  if (existing.exists()) {
-    return {
-      alreadyRegistered: true,
-      registrationId,
-      passToken: buildPassToken({ uid: user.uid, eventId, registrationId })
-    };
-  }
+  const passToken = buildPassToken({ uid: user.uid, eventId, registrationId });
 
   const capacity = Number(event.capacity);
   if (Number.isFinite(capacity)) {
@@ -78,13 +78,16 @@ export async function registerUserForEvent(user, event) {
     registeredAt: serverTimestamp()
   };
 
-  await setDoc(regRef, registrationData);
+  try {
+    await setDoc(regRef, registrationData);
+  } catch (err) {
+    if (err.code === 'permission-denied') {
+      return { alreadyRegistered: true, registrationId, passToken };
+    }
+    throw err;
+  }
 
-  return {
-    alreadyRegistered: false,
-    registrationId,
-    passToken: buildPassToken({ uid: user.uid, eventId, registrationId })
-  };
+  return { alreadyRegistered: false, registrationId, passToken };
 }
 
 // Admin-only: verifies a scanned/manual pass against the real registration
@@ -103,25 +106,31 @@ export async function markAttendanceForPass({ uid, eventId, registrationId, admi
 
   const attendanceId = `${uid}_${eventId}`;
   const attRef = doc(db, 'attendance', attendanceId);
-  const attSnap = await getDoc(attRef);
-  if (attSnap.exists()) {
-    return {
-      alreadyCheckedIn: true,
-      attendeeName: regData.userName,
-      attendeeEmail: regData.userEmail
-    };
-  }
 
-  await setDoc(attRef, {
-    attendanceId,
-    uid,
-    eventId,
-    userEmail: regData.userEmail,
-    userName: regData.userName,
-    markedAt: serverTimestamp(),
-    markedBy: adminUid,
-    method
-  });
+  // Same reasoning as registerUserForEvent: firestore.rules denies `update`
+  // on attendance, so a second write for the same attendanceId is denied -
+  // that denial is the "already checked in" signal, no pre-read needed.
+  try {
+    await setDoc(attRef, {
+      attendanceId,
+      uid,
+      eventId,
+      userEmail: regData.userEmail,
+      userName: regData.userName,
+      markedAt: serverTimestamp(),
+      markedBy: adminUid,
+      method
+    });
+  } catch (err) {
+    if (err.code === 'permission-denied') {
+      return {
+        alreadyCheckedIn: true,
+        attendeeName: regData.userName,
+        attendeeEmail: regData.userEmail
+      };
+    }
+    throw err;
+  }
 
   return {
     alreadyCheckedIn: false,
@@ -131,7 +140,10 @@ export async function markAttendanceForPass({ uid, eventId, registrationId, admi
 }
 
 // Participant feedback, gated on a real attendance record existing (also
-// enforced independently by firestore.rules).
+// enforced independently by firestore.rules). Duplicate submission is
+// detected the same way as registration/attendance: firestore.rules denies
+// `update` on feedback for non-admins, so a second write is denied rather
+// than needing a pre-read of the (possibly not-yet-existing) feedback doc.
 export async function submitEventFeedback({ uid, eventId, rating, comment }) {
   const attRef = doc(db, 'attendance', `${uid}_${eventId}`);
   const attSnap = await getDoc(attRef);
@@ -140,17 +152,19 @@ export async function submitEventFeedback({ uid, eventId, rating, comment }) {
   }
 
   const feedbackRef = doc(db, 'feedback', `${uid}_${eventId}`);
-  const existing = await getDoc(feedbackRef);
-  if (existing.exists()) {
-    throw new Error('You already submitted feedback for this event.');
+  try {
+    await setDoc(feedbackRef, {
+      feedbackId: `${uid}_${eventId}`,
+      uid,
+      eventId,
+      rating: Number(rating),
+      comment: comment || '',
+      submittedAt: serverTimestamp()
+    });
+  } catch (err) {
+    if (err.code === 'permission-denied') {
+      throw new Error('You already submitted feedback for this event.');
+    }
+    throw err;
   }
-
-  await setDoc(feedbackRef, {
-    feedbackId: `${uid}_${eventId}`,
-    uid,
-    eventId,
-    rating: Number(rating),
-    comment: comment || '',
-    submittedAt: serverTimestamp()
-  });
 }

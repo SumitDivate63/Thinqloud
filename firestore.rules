@@ -70,8 +70,12 @@ service cloud.firestore {
         resource.data.uid == request.auth.uid ||
         isAdmin()
       );
-      // Only the admin's authenticated client may record/override attendance
-      allow create, update, delete: if isAdmin();
+      // Only the admin's authenticated client may record attendance. Update
+      // is intentionally denied (not just admin-gated): the app relies on a
+      // second write to the same attendanceId being denied as its
+      // "already checked in" signal, instead of reading the document first.
+      allow create, delete: if isAdmin();
+      allow update: if false;
     }
 
     // 5. Feedback collection
